@@ -1,0 +1,138 @@
+-- CreateEnum
+CREATE TYPE "RoleUser" AS ENUM ('EMPLOYEE', 'ADMIN');
+
+-- CreateEnum
+CREATE TYPE "StatusCategory" AS ENUM ('Disponivel', 'Indisponivel');
+
+-- CreateEnum
+CREATE TYPE "StatusMenuCategory" AS ENUM ('Disponivel', 'Indisponivel');
+
+-- CreateEnum
+CREATE TYPE "StatusComment" AS ENUM ('Fila', 'Aprovar', 'Rejeitar', 'Spam', 'Lixeira');
+
+-- CreateTable
+CREATE TABLE "users" (
+    "id" TEXT NOT NULL,
+    "name" VARCHAR(295) NOT NULL,
+    "slug_name" VARCHAR(295) NOT NULL,
+    "image_user" TEXT,
+    "email" VARCHAR(180) NOT NULL,
+    "password" TEXT NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT false,
+    "role" "RoleUser" NOT NULL DEFAULT 'ADMIN',
+    "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "passwordrecoveryusers" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+
+    CONSTRAINT "passwordrecoveryusers_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "posts" (
+    "id" TEXT NOT NULL,
+    "title" VARCHAR(395) NOT NULL,
+    "slug_title_post" TEXT NOT NULL,
+    "text_post" TEXT NOT NULL,
+    "image_post" TEXT,
+    "status_post" BOOLEAN NOT NULL DEFAULT false,
+    "tags" JSONB,
+    "categories" JSONB,
+    "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "posts_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "categories" (
+    "id" TEXT NOT NULL,
+    "name_category" VARCHAR(300) NOT NULL,
+    "slug_name_category" VARCHAR(300) NOT NULL,
+    "image_category" TEXT,
+    "description" VARCHAR(15725),
+    "nivel" INTEGER,
+    "parentId" TEXT,
+    "order" INTEGER,
+    "status" "StatusCategory" NOT NULL DEFAULT 'Disponivel',
+    "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "categories_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "menucategories" (
+    "id" TEXT NOT NULL,
+    "name_group" VARCHAR(385) NOT NULL,
+    "name_category" TEXT,
+    "category_name" VARCHAR(385),
+    "slug_category_name" VARCHAR(400),
+    "position" VARCHAR(300),
+    "slug_position" VARCHAR(325),
+    "order" INTEGER,
+    "nivel" INTEGER,
+    "parentId" TEXT,
+    "status" "StatusMenuCategory" NOT NULL DEFAULT 'Disponivel',
+    "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "menucategories_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "comments" (
+    "id" TEXT NOT NULL,
+    "post_id" TEXT NOT NULL,
+    "author" VARCHAR(200) NOT NULL,
+    "comment" VARCHAR(5000) NOT NULL,
+    "nivel" INTEGER,
+    "parentId" TEXT,
+    "status" "StatusComment" NOT NULL DEFAULT 'Fila',
+    "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "comments_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "form_contacts" (
+    "id" TEXT NOT NULL,
+    "name_user" VARCHAR(200) NOT NULL,
+    "email_user" VARCHAR(200) NOT NULL,
+    "subject" VARCHAR(250) NOT NULL,
+    "menssage" VARCHAR(5000) NOT NULL,
+    "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "form_contacts_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "newsletters" (
+    "id" TEXT NOT NULL,
+    "name_user" VARCHAR(100) NOT NULL,
+    "email_user" VARCHAR(100) NOT NULL,
+    "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "newsletters_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "categories_name_category_key" ON "categories"("name_category");
+
+-- AddForeignKey
+ALTER TABLE "menucategories" ADD CONSTRAINT "menucategories_name_category_fkey" FOREIGN KEY ("name_category") REFERENCES "categories"("name_category") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "comments" ADD CONSTRAINT "comments_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
