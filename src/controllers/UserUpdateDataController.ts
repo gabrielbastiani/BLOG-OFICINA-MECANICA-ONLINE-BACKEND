@@ -8,41 +8,26 @@ class UserUpdateDataController {
             user_id,
             name,
             email,
-            image_user,
-            password,
-            role,
-            status
+            role
         } = req.body;
 
         const createUser = new UserUpdateDataService();
 
-        if (!image_user) {
-            const { originalname, filename: image_user } = req.file;
-            const users = await createUser.execute({
-                user_id,
-                name,
-                email,
-                image_user,
-                password,
-                role,
-                status
-            });
-
-            return res.json(users)
+        let imageToUpdate = req.body.image_user;
+        if (req.file) {
+            imageToUpdate = req.file.filename;
         }
 
         const users = await createUser.execute({
             user_id,
             name,
             email,
-            password,
-            role,
-            status
+            image_user: imageToUpdate,
+            role
         });
 
-        return res.json(users)
-
+        return res.json(users);
     }
 }
 
-export { UserUpdateDataController }
+export { UserUpdateDataController };

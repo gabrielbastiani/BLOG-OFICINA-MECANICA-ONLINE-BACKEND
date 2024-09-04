@@ -12,22 +12,16 @@ class UserCreateController {
 
         const createUser = new UserCreateService();
 
-        if (!image_user) {
-            const { originalname, filename: image_user } = req.file;
-            const users = await createUser.execute({
-                name,
-                email,
-                image_user,
-                password
-            });
-
-            return res.json(users)
+        let imageToUpdate = image_user;
+        if (!image_user && req.file) {
+            imageToUpdate = req.file.filename;
         }
 
         const users = await createUser.execute({
             name,
             email,
-            password
+            password,
+            image_user: imageToUpdate,
         });
 
         return res.json(users)

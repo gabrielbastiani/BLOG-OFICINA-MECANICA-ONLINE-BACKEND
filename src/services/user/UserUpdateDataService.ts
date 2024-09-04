@@ -1,23 +1,18 @@
 import { RoleUser } from '@prisma/client';
 import prismaClient from '../../prisma';
-import { hash } from 'bcryptjs';
-import nodemailer from "nodemailer";
-require('dotenv/config');
-import ejs from 'ejs';
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
 interface UserRequest {
     user_id: string;
     name?: string;
     email?: string;
     image_user?: string;
-    password?: string;
     role?: string;
-    status?: boolean;
 }
 
 class UserUpdateDataService {
-    async execute({ user_id, name, email, password, image_user, role, status }: UserRequest) {
+    async execute({ user_id, name, email, image_user, role }: UserRequest) {
 
         function removerAcentos(s: any) {
             return s.normalize('NFD')
@@ -28,63 +23,64 @@ class UserUpdateDataService {
                 .replace(/[/]/g, "-");
         }
 
-        if (!email) {
-            throw new Error("Email incorrect");
-        }
-
-        const userAlreadyExists = await prismaClient.user.findFirst({
-            where: {
-                email: email,
-            }
+        const user = await prismaClient.user.findUnique({
+            where: { id: user_id }
         });
 
-        if (userAlreadyExists) {
-            throw new Error("User already exists");
+        if (!user) {
+            throw new Error("User not found");
         }
 
-        const passwordHash = await hash(password, 8);
+        const dataToUpdate: any = {};
+
+        if (name) {
+            dataToUpdate.name = name;
+            dataToUpdate.slug_name = removerAcentos(name);
+        }
+
+        if (email) {
+            const userAlreadyExists = await prismaClient.user.findFirst({
+                where: {
+                    email: email,
+                    id: { not: user_id }
+                }
+            });
+
+            if (userAlreadyExists) {
+                throw new Error("User already exists");
+            }
+
+            dataToUpdate.email = email;
+        }
+
+        if (image_user) {
+            if (user.image_user) {
+                const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + user.image_user);
+                console.log(`Deleting image: ${imagePath}`);
+                fs.unlink(imagePath, (err) => {
+                    if (err) {
+                        console.error(`Failed to delete old image: ${err.message}`);
+                    } else {
+                        console.log('Old image deleted successfully');
+                    }
+                });
+            }
+            dataToUpdate.image_user = image_user;
+        }
+
+        if (role) {
+            dataToUpdate.role = role as RoleUser;
+        }
 
         const update_user = await prismaClient.user.update({
             where: {
                 id: user_id
             },
-            data: {
-                name: name,
-                slug_name: removerAcentos(name),
-                email: email,
-                image_user: image_user,
-                password: passwordHash,
-                role: role as RoleUser,
-                status: status
-            }
+            data: dataToUpdate
         });
-
-        /* const transporter = nodemailer.createTransport({
-            host: process.env.HOST_SMTP,
-            port: 465,
-            auth: {
-                user: process.env.USER_SMTP,
-                pass: process.env.PASS_SMTP
-            }
-        });
-
-        const requiredPath = path.join(__dirname, `../emails_transacionais/criacao_de_administrador.ejs`);
-
-        const data = await ejs.renderFile(requiredPath, {
-            name: update_user.name
-        });
-
-        await transporter.sendMail({
-            from: `Blog oficina mecânica online <contato.graxa@oficinamecanicaonline.com>`,
-            to: update_user.email,
-            subject: `Novo administrador se cadastrando no CMS do blog da Oficina mecânica online`,
-            html: data
-        }); */
 
         return update_user;
-
     }
-
 }
 
-export { UserUpdateDataService }
+export { UserUpdateDataService };
