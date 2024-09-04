@@ -5,6 +5,14 @@ interface Payload {
   sub: string;
 }
 
+declare global {
+  namespace Express {
+    interface Request {
+      user_id?: string;
+    }
+  }
+}
+
 export async function isAuthenticated(
   req: Request,
   res: Response,

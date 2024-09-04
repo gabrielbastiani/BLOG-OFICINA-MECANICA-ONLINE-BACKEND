@@ -29,14 +29,14 @@ class UserCreateService {
             throw new Error("Email incorrect");
         }
 
-        const adminAlreadyExists = await prismaClient.user.findFirst({
+        const userAlreadyExists = await prismaClient.user.findFirst({
             where: {
                 email: email,
             }
         });
 
-        if (adminAlreadyExists) {
-            throw new Error("Admin already exists");
+        if (userAlreadyExists) {
+            throw new Error("User already exists");
         }
 
         const passwordHash = await hash(password, 8);
@@ -78,7 +78,7 @@ class UserCreateService {
             await transporter.sendMail({
                 from: `Blog oficina mecânica online <contato.graxa@oficinamecanicaonline.com>`,
                 to: user_create_employee.email,
-                subject: `Novo cliente se cadastrando na loja virtual da ${user_create_employee.name}`,
+                subject: `Novo usuario se cadastrando no CMS do blog da Oficina mecânica online`,
                 html: data
             });
 
@@ -116,7 +116,7 @@ class UserCreateService {
         await transporter.sendMail({
             from: `Blog oficina mecânica online <contato.graxa@oficinamecanicaonline.com>`,
             to: user_create_admin.email,
-            subject: `Novo cliente se cadastrando na loja virtual da ${user_create_admin.name}`,
+            subject: `Novo administrador se cadastrando no CMS do blog da Oficina mecânica online`,
             html: data
         });
 
