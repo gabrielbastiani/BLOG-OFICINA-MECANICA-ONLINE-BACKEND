@@ -5,6 +5,12 @@ CREATE TYPE "RoleUser" AS ENUM ('EMPLOYEE', 'ADMIN');
 CREATE TYPE "StatusCategory" AS ENUM ('Disponivel', 'Indisponivel');
 
 -- CreateEnum
+CREATE TYPE "StatusProductCategory" AS ENUM ('Disponivel', 'Indisponivel');
+
+-- CreateEnum
+CREATE TYPE "MainCategory" AS ENUM ('Sim', 'Nao');
+
+-- CreateEnum
 CREATE TYPE "StatusMenuCategory" AS ENUM ('Disponivel', 'Indisponivel');
 
 -- CreateEnum
@@ -57,14 +63,25 @@ CREATE TABLE "categories" (
     "slug_name_category" VARCHAR(300) NOT NULL,
     "image_category" TEXT,
     "description" VARCHAR(15725),
-    "nivel" INTEGER,
-    "parentId" TEXT,
-    "order" INTEGER,
     "status" "StatusCategory" NOT NULL DEFAULT 'Disponivel',
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "categories_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "postcategories" (
+    "id" TEXT NOT NULL,
+    "post_id" TEXT NOT NULL,
+    "name_category" TEXT NOT NULL,
+    "order" INTEGER,
+    "status" "StatusProductCategory" NOT NULL DEFAULT 'Disponivel',
+    "main_category" "MainCategory" NOT NULL DEFAULT 'Nao',
+    "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "postcategories_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -130,6 +147,12 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "categories_name_category_key" ON "categories"("name_category");
+
+-- AddForeignKey
+ALTER TABLE "postcategories" ADD CONSTRAINT "postcategories_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "postcategories" ADD CONSTRAINT "postcategories_name_category_fkey" FOREIGN KEY ("name_category") REFERENCES "categories"("name_category") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "menucategories" ADD CONSTRAINT "menucategories_name_category_fkey" FOREIGN KEY ("name_category") REFERENCES "categories"("name_category") ON DELETE SET NULL ON UPDATE CASCADE;

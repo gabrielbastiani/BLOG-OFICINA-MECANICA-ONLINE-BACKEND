@@ -12,6 +12,10 @@ import { UserUpdateStatusController } from "./controllers/UserUpdateStatusContro
 import { RequestPasswordUserRecoveryController } from "./controllers/RequestPasswordUserRecoveryController";
 import { PasswordRecoveryUserController } from "./controllers/PasswordRecoveryUserController";
 
+// -- ROUTES CATEGORY --
+import { CategoryCreateController } from "./controllers/category/CategoryCreateController";
+
+
 const router = Router();
 const upload = multer(uploadConfig.upload("./images"));
 
@@ -23,6 +27,9 @@ router.put('/user/update', isAuthenticated, upload.single('file'), new UserUpdat
 router.put('/user/update_status', isAuthenticated, new UserUpdateStatusController().handle);
 router.post('/user/email_recovery_password', new RequestPasswordUserRecoveryController().handle);
 router.put('/user/recovery_password', new PasswordRecoveryUserController().handle);
+
+// -- ROUTES CATEGORY --
+router.post('/category/create', isAuthenticated, upload.single('file'), new CategoryCreateController().handle);
 
 
 export { router }

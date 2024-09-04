@@ -53,8 +53,9 @@ model Post {
 
   comment Comment[]
 
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @updatedAt
+  created_at    DateTime        @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime        @updatedAt
+  Post_category Post_category[]
 
   @@map("posts")
 }
@@ -65,15 +66,13 @@ model Category {
   slug_name_category String         @db.VarChar(300)
   image_category     String?
   description        String?        @db.VarChar(15725)
-  nivel              Int?
-  parentId           String?
-  order              Int?
   status             StatusCategory @default(Disponivel)
 
   menu_category Menu_category[]
 
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @updatedAt
+  created_at    DateTime        @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime        @updatedAt
+  Post_category Post_category[]
 
   @@map("categories")
 }
@@ -81,6 +80,32 @@ model Category {
 enum StatusCategory {
   Disponivel
   Indisponivel
+}
+
+model Post_category {
+  id            String                @id @default(uuid())
+  post          Post                  @relation(fields: [post_id], references: [id])
+  post_id       String
+  category      Category              @relation(fields: [name_category], references: [name_category])
+  name_category String
+  order         Int?
+  status        StatusProductCategory @default(Disponivel)
+  main_category MainCategory          @default(Nao)
+
+  created_at DateTime? @default(now()) @db.Timestamptz(3)
+  updated_at DateTime? @updatedAt
+
+  @@map("postcategories")
+}
+
+enum StatusProductCategory {
+  Disponivel
+  Indisponivel
+}
+
+enum MainCategory {
+  Sim
+  Nao
 }
 
 model Menu_category {
