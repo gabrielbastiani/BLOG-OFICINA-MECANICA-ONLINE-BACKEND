@@ -86,14 +86,14 @@ class UserCreateService {
 
         }
 
-        const user_create_admin = await prismaClient.user.create({
+        const user_create_super_admin = await prismaClient.user.create({
             data: {
                 name: name,
                 slug_name: removerAcentos(name),
                 email: email,
                 image_user: image_user,
                 password: passwordHash,
-                role: RoleUser.ADMIN,
+                role: RoleUser.SUPER_ADMIN,
                 status: true
             }
         });
@@ -107,20 +107,20 @@ class UserCreateService {
             }
         });
 
-        const requiredPath = path.join(__dirname, `../emails_transacionais/criacao_de_administrador.ejs`);
+        const requiredPath = path.join(__dirname, `../emails_transacionais/criacao_de_super_administrador.ejs`);
 
         const data = await ejs.renderFile(requiredPath, {
-            name: user_create_admin.name
+            name: user_create_super_admin.name
         });
 
         await transporter.sendMail({
             from: `Blog oficina mecânica online <contato.graxa@oficinamecanicaonline.com>`,
-            to: user_create_admin.email,
+            to: user_create_super_admin.email,
             subject: `Novo administrador se cadastrando no CMS do blog da Oficina mecânica online`,
             html: data
         });
 
-        return user_create_admin;
+        return user_create_super_admin;
 
     }
 
