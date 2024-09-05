@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
-import { UserDetailService } from '../services/user/UserDetailService'
+import { UserUpdateStatusService } from '../../services/user/UserUpdateStatusService'
 
-class UserDetailController {
+class UserUpdateStatusController {
     async handle(req: Request, res: Response) {
 
         const user_id = req.query.user_id as string;
 
-        const detail_user = new UserDetailService();
+        const detail_user = new UserUpdateStatusService();
 
         const user = await detail_user.execute({ user_id });
 
@@ -15,4 +15,4 @@ class UserDetailController {
     }
 }
 
-export { UserDetailController }
+export { UserUpdateStatusController }
