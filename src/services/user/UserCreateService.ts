@@ -43,7 +43,7 @@ class UserCreateService {
 
         const users = await prismaClient.user.findFirst({
             where: {
-                role: RoleUser.ADMIN
+                role: RoleUser.SUPER_ADMIN
             }
         });
 

@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "RoleUser" AS ENUM ('EMPLOYEE', 'ADMIN');
+CREATE TYPE "RoleUser" AS ENUM ('SUPER_ADMIN', 'EMPLOYEE', 'ADMIN');
 
 -- CreateEnum
 CREATE TYPE "StatusCategory" AS ENUM ('Disponivel', 'Indisponivel');
@@ -25,7 +25,7 @@ CREATE TABLE "users" (
     "email" VARCHAR(180) NOT NULL,
     "password" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT false,
-    "role" "RoleUser" NOT NULL DEFAULT 'ADMIN',
+    "role" "RoleUser" NOT NULL DEFAULT 'SUPER_ADMIN',
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 

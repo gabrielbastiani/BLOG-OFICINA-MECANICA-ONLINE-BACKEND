@@ -21,7 +21,7 @@ model User {
   email      String   @unique @db.VarChar(180)
   password   String
   status     Boolean  @default(false)
-  role       RoleUser @default(ADMIN)
+  role       RoleUser @default(SUPER_ADMIN)
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt
@@ -30,6 +30,7 @@ model User {
 }
 
 enum RoleUser {
+  SUPER_ADMIN
   EMPLOYEE
   ADMIN
 }

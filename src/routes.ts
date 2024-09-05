@@ -12,9 +12,13 @@ import { UserUpdateStatusController } from "./controllers/user/UserUpdateStatusC
 import { RequestPasswordUserRecoveryController } from "./controllers/user/RequestPasswordUserRecoveryController";
 import { PasswordRecoveryUserController } from "./controllers/user/PasswordRecoveryUserController";
 import { UserPhotoDeleteController } from "./controllers/user/UserPhotoDeleteController";
+import { UserDeleteController } from "./controllers/user/UserDeleteController";
 
 // -- ROUTES CATEGORY --
 import { CategoryCreateController } from "./controllers/category/CategoryCreateController";
+import { CategoryUpdateDataController } from "./controllers/category/CategoryUpdateDataController";
+import { CategoryDeleteImageController } from "./controllers/category/CategoryDeleteImageController";
+import { CategoryDeleteController } from "./controllers/category/CategoryDeleteController";
 
 
 
@@ -30,9 +34,13 @@ router.put('/user/update_status', isAuthenticated, new UserUpdateStatusControlle
 router.put('/user/delete_photo', isAuthenticated, new UserPhotoDeleteController().handle);
 router.post('/user/email_recovery_password', new RequestPasswordUserRecoveryController().handle);
 router.put('/user/recovery_password', new PasswordRecoveryUserController().handle);
+router.delete('/user/delete_user', isAuthenticated, new UserDeleteController().handle);
 
 // -- ROUTES CATEGORY --
 router.post('/category/create', isAuthenticated, upload.single('file'), new CategoryCreateController().handle);
+router.put('/category/update', isAuthenticated, upload.single('file'), new CategoryUpdateDataController().handle);
+router.put('/category/delete_image', isAuthenticated, new CategoryDeleteImageController().handle);
+router.delete('/category/delete_category', isAuthenticated, new CategoryDeleteController().handle);
 
 
 export { router }
