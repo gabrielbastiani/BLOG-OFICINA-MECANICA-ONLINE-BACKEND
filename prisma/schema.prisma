@@ -49,6 +49,35 @@ model PasswordRecoveryUser {
   @@map("passwordrecoveryusers")
 }
 
+model Category {
+  id                 String         @id @default(uuid())
+  name_category      String         @unique @db.VarChar(300)
+  slug_name_category String         @db.VarChar(300)
+  image_category     String?
+  description        String?        @db.VarChar(15725)
+  status             StatusCategory @default(Disponivel)
+  order              Int?
+  parentId           String?
+  nivel              Int?
+
+  post_category Post_category[]
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt
+
+  @@map("categories")
+}
+
+enum StatusCategory {
+  Disponivel
+  Indisponivel
+}
+
+enum MainCategory {
+  Sim
+  Nao
+}
+
 model Post {
   id              String         @id @default(uuid())
   user            User           @relation(fields: [author], references: [name])
@@ -74,28 +103,6 @@ enum StatusProduct {
   Indisponivel
 }
 
-model Category {
-  id                 String         @id @default(uuid())
-  name_category      String         @unique @db.VarChar(300)
-  slug_name_category String         @db.VarChar(300)
-  image_category     String?
-  description        String?        @db.VarChar(15725)
-  status             StatusCategory @default(Disponivel)
-
-  menu_category Menu_category[]
-  post_category Post_category[]
-
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @updatedAt
-
-  @@map("categories")
-}
-
-enum StatusCategory {
-  Disponivel
-  Indisponivel
-}
-
 model Post_category {
   id            String                @id @default(uuid())
   post          Post                  @relation(fields: [post_id], references: [id])
@@ -104,7 +111,7 @@ model Post_category {
   name_category String
   order         Int?
   status        StatusProductCategory @default(Disponivel)
-  main_category MainCategory          @default(Nao)
+  main_category MainCategoryPost      @default(Nao)
 
   created_at DateTime? @default(now()) @db.Timestamptz(3)
   updated_at DateTime? @updatedAt
@@ -117,34 +124,9 @@ enum StatusProductCategory {
   Indisponivel
 }
 
-enum MainCategory {
+enum MainCategoryPost {
   Sim
   Nao
-}
-
-model Menu_category {
-  id                 String             @id @default(uuid())
-  name_group         String             @db.VarChar(385)
-  category           Category?          @relation(fields: [name_category], references: [name_category])
-  name_category      String?
-  category_name      String?            @db.VarChar(385)
-  slug_category_name String?            @db.VarChar(400)
-  position           String?            @db.VarChar(300)
-  slug_position      String?            @db.VarChar(325)
-  order              Int?
-  nivel              Int?
-  parentId           String?
-  status             StatusMenuCategory @default(Disponivel)
-
-  created_at DateTime? @default(now()) @db.Timestamptz(3)
-  updated_at DateTime? @updatedAt
-
-  @@map("menucategories")
-}
-
-enum StatusMenuCategory {
-  Disponivel
-  Indisponivel
 }
 
 model Comment {
