@@ -59,7 +59,6 @@ model Post {
   image_post      String?
   status          StatusCategory @default(Disponivel)
   tags            Json?
-  categories      Json?
 
   comment Comment[]
 

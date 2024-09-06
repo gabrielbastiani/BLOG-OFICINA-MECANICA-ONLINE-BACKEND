@@ -56,7 +56,6 @@ CREATE TABLE "posts" (
     "image_post" TEXT,
     "status" "StatusCategory" NOT NULL DEFAULT 'Disponivel',
     "tags" JSONB,
-    "categories" JSONB,
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
