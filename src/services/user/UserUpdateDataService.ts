@@ -1,4 +1,4 @@
-import { RoleUser } from '@prisma/client';
+import { RoleUser, StatusUser } from '@prisma/client';
 import prismaClient from '../../prisma';
 import fs from 'fs';
 import path from 'path';
@@ -9,10 +9,11 @@ interface UserRequest {
     email?: string;
     image_user?: string;
     role?: string;
+    status?: string;
 }
 
 class UserUpdateDataService {
-    async execute({ user_id, name, email, image_user, role }: UserRequest) {
+    async execute({ user_id, name, email, image_user, role, status }: UserRequest) {
 
         function removerAcentos(s: any) {
             return s.normalize('NFD')
@@ -70,6 +71,10 @@ class UserUpdateDataService {
 
         if (role) {
             dataToUpdate.role = role as RoleUser;
+        }
+
+        if (status) {
+            dataToUpdate.status = status as StatusUser;
         }
 
         const update_user = await prismaClient.user.update({

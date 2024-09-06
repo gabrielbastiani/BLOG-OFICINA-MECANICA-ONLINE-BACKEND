@@ -1,4 +1,4 @@
-import { RoleUser } from '@prisma/client';
+import { RoleUser, StatusUser } from '@prisma/client';
 import prismaClient from '../../prisma';
 import { hash } from 'bcryptjs';
 import nodemailer from "nodemailer";
@@ -56,7 +56,7 @@ class UserCreateService {
                     image_user: image_user,
                     password: passwordHash,
                     role: RoleUser.EMPLOYEE,
-                    status: true
+                    status: StatusUser.Indisponivel
                 }
             });
 
@@ -93,8 +93,7 @@ class UserCreateService {
                 email: email,
                 image_user: image_user,
                 password: passwordHash,
-                role: RoleUser.SUPER_ADMIN,
-                status: true
+                role: RoleUser.SUPER_ADMIN
             }
         });
 

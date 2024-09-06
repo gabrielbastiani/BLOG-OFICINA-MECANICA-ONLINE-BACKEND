@@ -8,7 +8,8 @@ class UserUpdateDataController {
             user_id,
             name,
             email,
-            role
+            role,
+            status
         } = req.body;
 
         const createUser = new UserUpdateDataService();
@@ -23,7 +24,8 @@ class UserUpdateDataController {
             name,
             email,
             image_user: imageToUpdate,
-            role
+            role,
+            status
         });
 
         return res.json(users);

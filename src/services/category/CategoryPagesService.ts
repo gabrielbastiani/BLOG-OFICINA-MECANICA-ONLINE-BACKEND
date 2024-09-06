@@ -5,10 +5,24 @@ interface CategoryPropos {
   per_page?: number;
   searchQuery?: string;
   limit?: number;
+  category_id?: string;
 }
 
 class CategoryPagesService {
-  async execute({ page = 1, per_page, searchQuery }: CategoryPropos) {
+  async execute({ page = 1, per_page, searchQuery, category_id }: CategoryPropos) {
+
+    if (category_id) {
+      const category_unique = await prismaClient.category.findUnique({
+        where: {
+          id: category_id
+        }
+      });
+
+      return {
+        category_unique
+      };
+    }
+
     const itemsPerPage = per_page === undefined ? 10 : per_page;
     const skip = (page - 1) * itemsPerPage;
 
@@ -31,7 +45,10 @@ class CategoryPagesService {
       where: where,
     });
 
-    return { categoies, total_categories };
+    return {
+      categoies,
+      total_categories
+    };
 
   }
 }
