@@ -15,7 +15,7 @@ datasource db {
 
 model User {
   id         String     @id @default(uuid())
-  name       String     @db.VarChar(295)
+  name       String     @unique @db.VarChar(295)
   slug_name  String     @db.VarChar(295)
   image_user String?
   email      String     @unique @db.VarChar(180)
@@ -25,6 +25,7 @@ model User {
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt
+  Post       Post[]
 
   @@map("users")
 }
@@ -49,6 +50,8 @@ model PasswordRecoveryUser {
 
 model Post {
   id              String         @id @default(uuid())
+  user            User           @relation(fields: [author], references: [name])
+  author          String
   title           String         @db.VarChar(395)
   slug_title_post String
   text_post       String

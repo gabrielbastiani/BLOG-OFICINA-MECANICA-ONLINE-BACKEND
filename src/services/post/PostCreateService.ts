@@ -1,6 +1,7 @@
 import prismaClient from "../../prisma";
 
 interface PostRequest {
+    author: string;
     title: string;
     image_post?: string;
     text_post: string;
@@ -9,7 +10,7 @@ interface PostRequest {
 }
 
 class PostCreateService {
-    async execute({ title, image_post, text_post, tags, categories }: PostRequest) {
+    async execute({ author, title, image_post, text_post, tags, categories }: PostRequest) {
 
         function removerAcentos(s: any) {
             return s.normalize('NFD')
@@ -22,6 +23,7 @@ class PostCreateService {
 
         const post = await prismaClient.post.create({
             data: {
+                author: author,
                 title: title,
                 slug_title_post: removerAcentos(title),
                 image_post: image_post,

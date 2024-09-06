@@ -49,6 +49,7 @@ CREATE TABLE "passwordrecoveryusers" (
 -- CreateTable
 CREATE TABLE "posts" (
     "id" TEXT NOT NULL,
+    "author" TEXT NOT NULL,
     "title" VARCHAR(395) NOT NULL,
     "slug_title_post" TEXT NOT NULL,
     "text_post" TEXT NOT NULL,
@@ -149,10 +150,16 @@ CREATE TABLE "newsletters" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "users_name_key" ON "users"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "categories_name_category_key" ON "categories"("name_category");
+
+-- AddForeignKey
+ALTER TABLE "posts" ADD CONSTRAINT "posts_author_fkey" FOREIGN KEY ("author") REFERENCES "users"("name") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "postcategories" ADD CONSTRAINT "postcategories_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

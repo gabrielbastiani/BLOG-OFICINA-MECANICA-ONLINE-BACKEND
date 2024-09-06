@@ -4,7 +4,7 @@ import { PostCreateService } from '../../services/post/PostCreateService';
 class PostCreateController {
     async handle(req: Request, res: Response) {
         const {
-            title, image_post, text_post, tags, categories
+            author, title, image_post, text_post, tags, categories
         } = req.body;
 
         const create_post = new PostCreateService();
@@ -15,6 +15,7 @@ class PostCreateController {
         }
 
         const post = await create_post.execute({
+            author,
             title,
             text_post,
             image_post: imageToUpdate,
