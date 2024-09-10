@@ -23,6 +23,7 @@ import { CategoryPagesController } from "./controllers/category/CategoryPagesCon
 
 // -- ROUTES POST --
 import { PostCreateController } from "./controllers/post/PostCreateController";
+import { PostUpdateDataController } from "./controllers/post/PostUpdateDataController";
 
 
 
@@ -49,6 +50,7 @@ router.get('/category/cms', isAuthenticated, new CategoryPagesController().handl
 
 // -- ROUTES POST --
 router.post('/post/create_post', isAuthenticated, upload.single('file'), new PostCreateController().handle);
+router.put('/post/update', isAuthenticated, upload.single('file'), new PostUpdateDataController().handle);
 
 
 export { router }

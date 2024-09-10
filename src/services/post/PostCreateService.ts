@@ -27,7 +27,7 @@ class PostCreateService {
                 slug_title_post: removerAcentos(title),
                 image_post: image_post,
                 text_post: text_post,
-                tags: { tags }
+                tags: tags
             }
         });
 

@@ -8,9 +8,6 @@ CREATE TYPE "StatusUser" AS ENUM ('Disponivel', 'Indisponivel');
 CREATE TYPE "StatusCategory" AS ENUM ('Disponivel', 'Indisponivel');
 
 -- CreateEnum
-CREATE TYPE "MainCategory" AS ENUM ('Sim', 'Nao');
-
--- CreateEnum
 CREATE TYPE "StatusProduct" AS ENUM ('Disponivel', 'Indisponivel');
 
 -- CreateEnum
@@ -71,7 +68,7 @@ CREATE TABLE "posts" (
     "slug_title_post" TEXT NOT NULL,
     "text_post" TEXT NOT NULL,
     "image_post" TEXT,
-    "status" "StatusCategory" NOT NULL DEFAULT 'Disponivel',
+    "status" "StatusProduct" NOT NULL DEFAULT 'Disponivel',
     "tags" JSONB,
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,

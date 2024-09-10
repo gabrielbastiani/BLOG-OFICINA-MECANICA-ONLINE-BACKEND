@@ -74,14 +74,14 @@ enum StatusCategory {
 }
 
 model Post {
-  id              String         @id @default(uuid())
-  user            User           @relation(fields: [author], references: [name])
+  id              String        @id @default(uuid())
+  user            User          @relation(fields: [author], references: [name])
   author          String
-  title           String         @db.VarChar(395)
+  title           String        @db.VarChar(395)
   slug_title_post String
   text_post       String
   image_post      String?
-  status          StatusCategory @default(Disponivel)
+  status          StatusProduct @default(Disponivel)
   tags            Json?
 
   comment       Comment[]
