@@ -24,6 +24,8 @@ import { CategoryPagesController } from "./controllers/category/CategoryPagesCon
 // -- ROUTES POST --
 import { PostCreateController } from "./controllers/post/PostCreateController";
 import { PostUpdateDataController } from "./controllers/post/PostUpdateDataController";
+import { PostDeleteController } from "./controllers/post/PostDeleteController";
+import { PostPagesController } from "./controllers/post/PostPagesController";
 
 
 
@@ -51,6 +53,8 @@ router.get('/category/cms', isAuthenticated, new CategoryPagesController().handl
 // -- ROUTES POST --
 router.post('/post/create_post', isAuthenticated, upload.single('file'), new PostCreateController().handle);
 router.put('/post/update', isAuthenticated, upload.single('file'), new PostUpdateDataController().handle);
+router.delete('/post/delete_post', isAuthenticated, new PostDeleteController().handle);
+router.get('/post/cms', isAuthenticated, new PostPagesController().handle);
 
 
 export { router }
