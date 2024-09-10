@@ -5,8 +5,11 @@ class CategoryCreateController {
     async handle(req: Request, res: Response) {
         const {
             name_category,
+            image_category,
             description,
-            image_category
+            order,
+            parentId,
+            nivel
         } = req.body;
 
         const create_category = new CategoryCreateService();
@@ -19,7 +22,10 @@ class CategoryCreateController {
         const category = await create_category.execute({
             name_category,
             description,
-            image_category: imageToUpdate
+            image_category: imageToUpdate,
+            order,
+            parentId,
+            nivel
         });
 
         return res.json(category)
