@@ -22,7 +22,7 @@ class PostUpdateDataController {
             image_post: imageToUpdate,
             status,
             text_post,
-            tags
+            tags: tags || []
         });
 
         return res.json(post);

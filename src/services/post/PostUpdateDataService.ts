@@ -10,7 +10,7 @@ interface PostProps {
     text_post?: string;
     image_post?: string;
     status?: string;
-    tags?: String[];
+    tags?: string[];
 }
 
 class PostUpdateDataService {
@@ -37,7 +37,7 @@ class PostUpdateDataService {
 
         if (title) {
             dataToUpdate.title = title;
-            dataToUpdate.slug_title_post = removerAcentos(author);
+            dataToUpdate.slug_title_post = removerAcentos(title);
         }
 
         if (image_post) {
