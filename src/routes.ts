@@ -27,6 +27,9 @@ import { PostUpdateDataController } from "./controllers/post/PostUpdateDataContr
 import { PostDeleteController } from "./controllers/post/PostDeleteController";
 import { PostPagesController } from "./controllers/post/PostPagesController";
 
+// -- ROUTES POST CATEGORY --
+import { PostCategoryCreateController } from "./controllers/post_category/PostCategoryCreateController";
+
 
 
 const router = Router();
@@ -55,6 +58,9 @@ router.post('/post/create_post', isAuthenticated, upload.single('file'), new Pos
 router.put('/post/update', isAuthenticated, upload.single('file'), new PostUpdateDataController().handle);
 router.delete('/post/delete_post', isAuthenticated, new PostDeleteController().handle);
 router.get('/post/cms', isAuthenticated, new PostPagesController().handle);
+
+// -- ROUTES POST CATEGORY --
+router.post('/post_category/create_post_category', isAuthenticated, new PostCategoryCreateController().handle);
 
 
 export { router }
