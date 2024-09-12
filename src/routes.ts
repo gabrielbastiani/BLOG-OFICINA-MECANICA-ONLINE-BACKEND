@@ -29,6 +29,9 @@ import { PostPagesController } from "./controllers/post/PostPagesController";
 
 // -- ROUTES POST CATEGORY --
 import { PostCategoryCreateController } from "./controllers/post_category/PostCategoryCreateController";
+import { PostCategoryUpdateDataController } from "./controllers/post_category/PostCategoryUpdateDataController";
+import { PostCategoryDeleteController } from "./controllers/post_category/PostCategoryDeleteController";
+import { PostCategoryFindController } from "./controllers/post_category/PostCategoryFindController";
 
 
 
@@ -61,6 +64,9 @@ router.get('/post/cms', isAuthenticated, new PostPagesController().handle);
 
 // -- ROUTES POST CATEGORY --
 router.post('/post_category/create_post_category', isAuthenticated, new PostCategoryCreateController().handle);
+router.put('/post_category/update', isAuthenticated, new PostCategoryUpdateDataController().handle);
+router.delete('/post_category/delete', isAuthenticated, new PostCategoryDeleteController().handle);
+router.get('/post_category/get_post_category', isAuthenticated, new PostCategoryFindController().handle);
 
 
 export { router }
