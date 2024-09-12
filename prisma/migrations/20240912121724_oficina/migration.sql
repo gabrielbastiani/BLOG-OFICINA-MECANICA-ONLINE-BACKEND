@@ -95,6 +95,7 @@ CREATE TABLE "comments" (
     "id" TEXT NOT NULL,
     "post_id" TEXT NOT NULL,
     "author" VARCHAR(200) NOT NULL,
+    "slug_author" TEXT NOT NULL,
     "comment" VARCHAR(5000) NOT NULL,
     "nivel" INTEGER,
     "parentId" TEXT,
@@ -109,6 +110,7 @@ CREATE TABLE "comments" (
 CREATE TABLE "form_contacts" (
     "id" TEXT NOT NULL,
     "name_user" VARCHAR(200) NOT NULL,
+    "slug_name_user" TEXT NOT NULL,
     "email_user" VARCHAR(200) NOT NULL,
     "subject" VARCHAR(250) NOT NULL,
     "menssage" VARCHAR(5000) NOT NULL,

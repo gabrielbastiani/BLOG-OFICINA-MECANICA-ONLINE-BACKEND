@@ -33,6 +33,21 @@ import { PostCategoryUpdateDataController } from "./controllers/post_category/Po
 import { PostCategoryDeleteController } from "./controllers/post_category/PostCategoryDeleteController";
 import { PostCategoryFindController } from "./controllers/post_category/PostCategoryFindController";
 
+// -- ROUTES COMMENT --
+import { CommentCreateController } from "./controllers/comment/CommentCreateController";
+import { CommentStatusController } from "./controllers/comment/CommentStatusController";
+import { CommentDeleteController } from "./controllers/comment/CommentDeleteController";
+import { CommentFindController } from "./controllers/comment/CommentFindController";
+
+// -- ROUTES FORM CONTACT --
+import { FormContactCreateController } from "./controllers/form_contact/FormContactCreateController";
+import { FormContactDeleteController } from "./controllers/form_contact/FormContactDeleteController";
+
+// -- ROUTES NEWSLETTER --
+import { NewsletterCreateController } from "./controllers/newsletter/NewsletterCreateController";
+import { NewsletterDeleteController } from "./controllers/newsletter/NewsletterDeleteController";
+import { NewsletterFindController } from "./controllers/newsletter/NewsletterFindController";
+
 
 
 const router = Router();
@@ -67,6 +82,21 @@ router.post('/post_category/create_post_category', isAuthenticated, new PostCate
 router.put('/post_category/update', isAuthenticated, new PostCategoryUpdateDataController().handle);
 router.delete('/post_category/delete', isAuthenticated, new PostCategoryDeleteController().handle);
 router.get('/post_category/get_post_category', isAuthenticated, new PostCategoryFindController().handle);
+
+// -- ROUTES COMMENT --
+router.post('/comment/create_comment', new CommentCreateController().handle);
+router.put('/comment/update_status', isAuthenticated, new CommentStatusController().handle);
+router.put('/comment/delete', isAuthenticated, new CommentDeleteController().handle);
+router.get('/comment/cms/get_comments', isAuthenticated, new CommentFindController().handle);
+
+// -- ROUTES FORM CONTACT --
+router.post('/form_contact/create_form_contact', new FormContactCreateController().handle);
+router.delete('/form_contact/delete_form_contatct', isAuthenticated, new FormContactDeleteController().handle);
+
+// -- ROUTES NEWSLETTER --
+router.post('/newsletter/create_newsletter', new NewsletterCreateController().handle);
+router.delete('/newsletter/delete_newsletter', isAuthenticated, new NewsletterDeleteController().handle);
+router.get('/newsletter/get_newsletters', isAuthenticated, new NewsletterFindController().handle);
 
 
 export { router }

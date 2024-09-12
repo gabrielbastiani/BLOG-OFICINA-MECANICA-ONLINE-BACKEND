@@ -125,14 +125,15 @@ enum MainCategoryPost {
 }
 
 model Comment {
-  id       String        @id @default(uuid())
-  post     Post          @relation(fields: [post_id], references: [id])
-  post_id  String
-  author   String        @db.VarChar(200)
-  comment  String        @db.VarChar(5000)
-  nivel    Int?
-  parentId String?
-  status   StatusComment @default(Fila)
+  id          String        @id @default(uuid())
+  post        Post          @relation(fields: [post_id], references: [id])
+  post_id     String
+  author      String        @db.VarChar(200)
+  slug_author String
+  comment     String        @db.VarChar(5000)
+  nivel       Int?
+  parentId    String?
+  status      StatusComment @default(Fila)
 
   created_at DateTime? @default(now()) @db.Timestamptz(3)
   updated_at DateTime? @updatedAt
@@ -149,11 +150,12 @@ enum StatusComment {
 }
 
 model Form_contact {
-  id         String @id @default(uuid())
-  name_user  String @db.VarChar(200)
-  email_user String @db.VarChar(200)
-  subject    String @db.VarChar(250)
-  menssage   String @db.VarChar(5000)
+  id             String @id @default(uuid())
+  name_user      String @db.VarChar(200)
+  slug_name_user String
+  email_user     String @db.VarChar(200)
+  subject        String @db.VarChar(250)
+  menssage       String @db.VarChar(5000)
 
   created_at DateTime? @default(now()) @db.Timestamptz(3)
   updated_at DateTime? @updatedAt
