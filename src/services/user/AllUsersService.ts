@@ -11,10 +11,17 @@ class AllUsersService {
 
         const all_users = await prismaClient.user.findMany();
 
+        const super_admin = await prismaClient.user.findFirst({
+            where: {
+                id: user_id
+            }
+        });
+
 
 
         const data = {
             all_users,
+            super_admin
         }
 
         return data;
