@@ -1,18 +1,15 @@
-import { Request, Response } from 'express'
-import { AllUsersService } from '../../services/user/AllUsersService'
+import { Request, Response } from 'express';
+import { AllUsersService } from '../../services/user/AllUsersService';
 
 class AllUserController {
     async handle(req: Request, res: Response) {
+        const { page = 1, limit = 5 } = req.query;
 
-        const user_id = req.query.user_id as string;
+        const allUsersService = new AllUsersService();
+        const users = await allUsersService.execute(Number(page), Number(limit));
 
-        const detail_user = new AllUsersService();
-
-        const user = await detail_user.execute({ user_id });
-
-        return res.json(user);
-
+        return res.json(users);
     }
 }
 
-export { AllUserController }
+export { AllUserController };

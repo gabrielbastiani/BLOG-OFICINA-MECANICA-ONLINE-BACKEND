@@ -1,32 +1,25 @@
 import prismaClient from "../../prisma";
 
-interface UserRequest {
-    user_id?: string;
-}
-
 class AllUsersService {
-    async execute({ user_id }: UserRequest) {
+    async execute(page: number = 1, limit: number = 5) {
+        const skip = (page - 1) * limit;
 
-
-
-        const all_users = await prismaClient.user.findMany();
-
-        const super_admin = await prismaClient.user.findFirst({
-            where: {
-                id: user_id
-            }
+        const all_users = await prismaClient.user.findMany({
+            skip,
+            take: limit,
         });
 
-
+        const total_users = await prismaClient.user.count();
 
         const data = {
-            all_users,
-            super_admin
-        }
+            users: all_users,
+            currentPage: page,
+            totalPages: Math.ceil(total_users / limit),
+            totalUsers: total_users,
+        };
 
         return data;
-
     }
 }
 
-export { AllUsersService }
+export { AllUsersService };
