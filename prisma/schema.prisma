@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// criar uma migration: yarn prisma migrate dev
+
+model User {
+  id         String     @id @default(uuid())
+  name       String     @unique @db.VarChar(295)
+  slug_name  String     @db.VarChar(295)
+  image_user String?
+  email      String     @unique @db.VarChar(180)
+  password   String
+  status     StatusUser @default(Disponivel)
+  role       RoleUser   @default(SUPER_ADMIN)
+
+  post Post[]
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum RoleUser {
+  SUPER_ADMIN
+  EMPLOYEE
+  ADMIN
+}
+
+enum StatusUser {
+  Disponivel
+  Indisponivel
+}
+
+model PasswordRecoveryUser {
+  id    String @id @default(uuid())
+  email String
+
+  @@map("passwordrecoveryusers")
+}
+
+model Category {
+  id                 String         @id @default(uuid())
+  name_category      String         @unique @db.VarChar(300)
+  slug_name_category String         @db.VarChar(300)
+  image_category     String?
+  description        String?        @db.VarChar(15725)
+  status             StatusCategory @default(Disponivel)
+  order              Int?
+  parentId           String?
+  nivel              Int?
+
+  post_category Post_category[]
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt
+
+  @@map("categories")
+}
+
+enum StatusCategory {
+  Disponivel
+  Indisponivel
+}
+
+model Post {
+  id              String        @id @default(uuid())
+  user            User          @relation(fields: [author], references: [name])
+  author          String
+  title           String        @db.VarChar(395)
+  slug_title_post String
+  text_post       String
+  image_post      String?
+  status          StatusProduct @default(Disponivel)
+  tags            Json?
+
+  comment       Comment[]
+  post_category Post_category[]
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt
+
+  @@map("posts")
+}
+
+enum StatusProduct {
+  Disponivel
+  Indisponivel
+}
+
+model Post_category {
+  id            String                @id @default(uuid())
+  post          Post                  @relation(fields: [post_id], references: [id])
+  post_id       String
+  category      Category              @relation(fields: [name_category], references: [name_category])
+  name_category String
+  order         Int?
+  status        StatusProductCategory @default(Disponivel)
+  main_category MainCategoryPost      @default(Nao)
+
+  created_at DateTime? @default(now()) @db.Timestamptz(3)
+  updated_at DateTime? @updatedAt
+
+  @@map("postcategories")
+}
+
+enum StatusProductCategory {
+  Disponivel
+  Indisponivel
+}
+
+enum MainCategoryPost {
+  Sim
+  Nao
+}
+
+model Comment {
+  id          String        @id @default(uuid())
+  post        Post          @relation(fields: [post_id], references: [id])
+  post_id     String
+  author      String        @db.VarChar(200)
+  slug_author String
+  comment     String        @db.VarChar(5000)
+  nivel       Int?
+  parentId    String?
+  status      StatusComment @default(Fila)
+
+  created_at DateTime? @default(now()) @db.Timestamptz(3)
+  updated_at DateTime? @updatedAt
+
+  @@map("comments")
+}
+
+enum StatusComment {
+  Fila
+  Aprovar
+  Rejeitar
+  Spam
+  Lixeira
+}
+
+model Form_contact {
+  id             String @id @default(uuid())
+  name_user      String @db.VarChar(200)
+  slug_name_user String
+  email_user     String @db.VarChar(200)
+  subject        String @db.VarChar(250)
+  menssage       String @db.VarChar(5000)
+
+  created_at DateTime? @default(now()) @db.Timestamptz(3)
+  updated_at DateTime? @updatedAt
+
+  @@map("form_contacts")
+}
+
+model Newsletter {
+  id         String @id @default(uuid())
+  name_user  String @db.VarChar(100)
+  email_user String @db.VarChar(100)
+
+  created_at DateTime? @default(now()) @db.Timestamptz(3)
+  updated_at DateTime? @updatedAt
+
+  @@map("newsletters")
+}
