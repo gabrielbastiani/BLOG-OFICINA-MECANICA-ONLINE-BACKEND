@@ -13,6 +13,7 @@ import { PasswordRecoveryUserController } from "./controllers/user/PasswordRecov
 import { UserPhotoDeleteController } from "./controllers/user/UserPhotoDeleteController";
 import { UserDeleteController } from "./controllers/user/UserDeleteController";
 import { AllUserController } from "./controllers/user/AllUserController";
+import { SuperUserPublicController } from "./controllers/user/SuperUserPublicController";
 
 // -- ROUTES CATEGORY --
 import { CategoryCreateController } from "./controllers/category/CategoryCreateController";
@@ -43,6 +44,7 @@ import { CommentFindController } from "./controllers/comment/CommentFindControll
 import { FormContactCreateController } from "./controllers/form_contact/FormContactCreateController";
 import { FormContactDeleteController } from "./controllers/form_contact/FormContactDeleteController";
 import { FormContactFindController } from "./controllers/form_contact/FormContactFindController";
+import { ContactController } from "./controllers/form_contact/ContactController";
 
 // -- ROUTES NEWSLETTER --
 import { NewsletterCreateController } from "./controllers/newsletter/NewsletterCreateController";
@@ -64,6 +66,7 @@ router.post('/user/email_recovery_password', new RequestPasswordUserRecoveryCont
 router.put('/user/recovery_password', new PasswordRecoveryUserController().handle);
 router.delete('/user/delete_user', isAuthenticated, new UserDeleteController().handle);
 router.get('/user/all_users', isAuthenticated, new AllUserController().handle);
+router.get('/user/publicSuper_user', new SuperUserPublicController().handle);
 
 // -- ROUTES CATEGORY --
 router.post('/category/create', isAuthenticated, upload.single('file'), new CategoryCreateController().handle);
@@ -94,6 +97,7 @@ router.get('/comment/cms/get_comments', isAuthenticated, new CommentFindControll
 router.post('/form_contact/create_form_contact', new FormContactCreateController().handle);
 router.delete('/form_contact/delete_form_contatct', isAuthenticated, new FormContactDeleteController().handle);
 router.get('/contacts_form/all_contacts', isAuthenticated, new FormContactFindController().handle);
+router.get('/contacts_form/contact', isAuthenticated, new ContactController().handle);
 
 // -- ROUTES NEWSLETTER --
 router.post('/newsletter/create_newsletter', new NewsletterCreateController().handle);

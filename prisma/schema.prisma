@@ -81,6 +81,7 @@ model Post {
   slug_title_post String
   text_post       String
   image_post      String?
+  post_like       Int?
   status          StatusProduct @default(Disponivel)
   tags            Json?
 
@@ -125,15 +126,16 @@ enum MainCategoryPost {
 }
 
 model Comment {
-  id          String        @id @default(uuid())
-  post        Post          @relation(fields: [post_id], references: [id])
-  post_id     String
-  author      String        @db.VarChar(200)
-  slug_author String
-  comment     String        @db.VarChar(5000)
-  nivel       Int?
-  parentId    String?
-  status      StatusComment @default(Fila)
+  id           String        @id @default(uuid())
+  post         Post          @relation(fields: [post_id], references: [id])
+  post_id      String
+  author       String        @db.VarChar(200)
+  slug_author  String
+  comment      String        @db.VarChar(5000)
+  nivel        Int?
+  parentId     String?
+  comment_like Int?
+  status       StatusComment @default(Fila)
 
   created_at DateTime? @default(now()) @db.Timestamptz(3)
   updated_at DateTime? @updatedAt
