@@ -1,19 +1,18 @@
 import { Request, Response } from 'express';
-import { FormContactDeleteService } from '../../services/form_contact/FormContactDeleteService'; 
+import { FormContactDeleteService } from '../../services/form_contact/FormContactDeleteService';
 
 class FormContactDeleteController {
     async handle(req: Request, res: Response) {
-        const form_contact_id = req.query.form_contact_id as string;
+        const { form_contact_ids } = req.body;
 
-        const form_contact = new FormContactDeleteService();
+        const formContactDeleteService = new FormContactDeleteService();
 
-        const form = await form_contact.execute({
-            form_contact_id
+        const deletedForms = await formContactDeleteService.execute({
+            form_contact_ids
         });
 
-        return res.json(form)
-
+        return res.json(deletedForms);
     }
 }
 
-export { FormContactDeleteController }
+export { FormContactDeleteController };

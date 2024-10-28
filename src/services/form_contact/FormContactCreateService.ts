@@ -1,4 +1,8 @@
 import prismaClient from "../../prisma";
+import nodemailer from "nodemailer";
+require('dotenv/config');
+import ejs from 'ejs';
+import path from "path";
 
 interface FormRequest {
     email_user: string;
@@ -27,6 +31,30 @@ class FormContactCreateService {
                 subject: subject,
                 menssage: menssage
             }
+        });
+
+        const transporter = nodemailer.createTransport({
+            host: process.env.HOST_SMTP,
+            port: 465,
+            auth: {
+                user: process.env.USER_SMTP,
+                pass: process.env.PASS_SMTP
+            }
+        });
+
+        const requiredPath = path.join(__dirname, `../emails_transacionais/criacao_de_mensagem_formulario.ejs`);
+
+        const data = await ejs.renderFile(requiredPath, {
+            name: name_user,
+            menssage: menssage,
+            subject: subject
+        });
+
+        await transporter.sendMail({
+            from: `${email_user}`,
+            to: "contato.graxa@oficinamecanicaonline.com",
+            subject: `Alguém enviou uma mensagem para o Blog Oficina mecânica online`,
+            html: data
         });
 
         return comment_create;
