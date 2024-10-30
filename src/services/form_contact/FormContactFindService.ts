@@ -7,7 +7,7 @@ class FormContactFindService {
         limit: number = 5,
         search: string = "",
         orderBy: string = "created_at",
-        orderDirection: Prisma.SortOrder = "desc" // Novo parâmetro para direção de ordenação
+        orderDirection: Prisma.SortOrder = "desc"
     ) {
         const skip = (page - 1) * limit;
 
@@ -24,7 +24,7 @@ class FormContactFindService {
             where: whereClause,
             skip,
             take: limit,
-            orderBy: { [orderBy]: orderDirection }, // Usando o orderDirection aqui
+            orderBy: { [orderBy]: orderDirection },
         });
 
         const total_contacts = await prismaClient.form_contact.count({

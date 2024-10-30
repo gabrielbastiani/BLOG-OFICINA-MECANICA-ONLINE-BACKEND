@@ -51,6 +51,9 @@ import { NewsletterCreateController } from "./controllers/newsletter/NewsletterC
 import { NewsletterDeleteController } from "./controllers/newsletter/NewsletterDeleteController";
 import { NewsletterFindController } from "./controllers/newsletter/NewsletterFindController";
 
+// -- ROUTES EXPORTDATA --
+import { ExportDataController } from "./controllers/export_data/ExportDataController";
+
 
 
 const router = Router();
@@ -103,6 +106,9 @@ router.get('/contacts_form/contact', isAuthenticated, new ContactController().ha
 router.post('/newsletter/create_newsletter', new NewsletterCreateController().handle);
 router.delete('/newsletter/delete_newsletter', isAuthenticated, new NewsletterDeleteController().handle);
 router.get('/newsletter/get_newsletters', isAuthenticated, new NewsletterFindController().handle);
+
+// -- ROUTES EXPORTDATA --
+router.post('/export_data', isAuthenticated, new ExportDataController().handle);
 
 
 export { router }
