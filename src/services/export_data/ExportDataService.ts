@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx';
 
 class ExportDataService {
     async execute(tableName: string, columns: string[], format: 'xlsx' | 'csv', customColumnNames: { [key: string]: string }) {
+
         const dataExport = await prismaClient[tableName].findMany({
             select: columns.reduce((acc, col) => ({ ...acc, [col]: true }), {}),
         });

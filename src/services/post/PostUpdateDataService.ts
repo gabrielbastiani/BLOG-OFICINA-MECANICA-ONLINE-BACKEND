@@ -1,4 +1,4 @@
-import { StatusProduct } from '@prisma/client';
+import { StatusPost } from '@prisma/client';
 import prismaClient from '../../prisma';
 import fs from 'fs';
 import path from 'path';
@@ -56,7 +56,7 @@ class PostUpdateDataService {
         }
 
         if (status) {
-            dataToUpdate.status = status as StatusProduct;
+            dataToUpdate.status = status as StatusPost;
         }
 
         if (text_post) {

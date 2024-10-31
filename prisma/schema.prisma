@@ -25,8 +25,9 @@ model User {
 
   post Post[]
 
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @updatedAt
+  created_at       DateTime           @default(now()) @db.Timestamptz(3)
+  updated_at       DateTime           @updatedAt
+  NotificationUser NotificationUser[]
 
   @@map("users")
 }
@@ -38,6 +39,27 @@ enum RoleUser {
 }
 
 enum StatusUser {
+  Disponivel
+  Indisponivel
+}
+
+model UserBlog {
+  id         String         @id @default(uuid())
+  name       String         @unique @db.VarChar(295)
+  slug_name  String         @db.VarChar(295)
+  image_user String?
+  email      String         @unique @db.VarChar(180)
+  password   String
+  status     StatusUserBlog @default(Disponivel)
+
+  created_at           DateTime               @default(now()) @db.Timestamptz(3)
+  updated_at           DateTime               @updatedAt
+  NotificationUserBlog NotificationUserBlog[]
+
+  @@map("userblogs")
+}
+
+enum StatusUserBlog {
   Disponivel
   Indisponivel
 }
@@ -74,15 +96,15 @@ enum StatusCategory {
 }
 
 model Post {
-  id              String        @id @default(uuid())
-  user            User          @relation(fields: [author], references: [name])
+  id              String     @id @default(uuid())
+  user            User       @relation(fields: [author], references: [name])
   author          String
-  title           String        @db.VarChar(395)
+  title           String     @db.VarChar(395)
   slug_title_post String
   text_post       String
   image_post      String?
   post_like       Int?
-  status          StatusProduct @default(Disponivel)
+  status          StatusPost @default(Disponivel)
   tags            Json?
 
   comment       Comment[]
@@ -94,20 +116,20 @@ model Post {
   @@map("posts")
 }
 
-enum StatusProduct {
+enum StatusPost {
   Disponivel
   Indisponivel
 }
 
 model Post_category {
-  id            String                @id @default(uuid())
-  post          Post                  @relation(fields: [post_id], references: [id])
+  id            String             @id @default(uuid())
+  post          Post               @relation(fields: [post_id], references: [id])
   post_id       String
-  category      Category              @relation(fields: [name_category], references: [name_category])
+  category      Category           @relation(fields: [name_category], references: [name_category])
   name_category String
   order         Int?
-  status        StatusProductCategory @default(Disponivel)
-  main_category MainCategoryPost      @default(Nao)
+  status        StatusPostCategory @default(Disponivel)
+  main_category MainCategoryPost   @default(Nao)
 
   created_at DateTime? @default(now()) @db.Timestamptz(3)
   updated_at DateTime? @updatedAt
@@ -115,7 +137,7 @@ model Post_category {
   @@map("postcategories")
 }
 
-enum StatusProductCategory {
+enum StatusPostCategory {
   Disponivel
   Indisponivel
 }
@@ -174,4 +196,30 @@ model Newsletter {
   updated_at DateTime? @updatedAt
 
   @@map("newsletters")
+}
+
+model NotificationUser {
+  id      String  @id @default(uuid())
+  user    User?   @relation(fields: [user_id], references: [id])
+  user_id String?
+  message String  @db.VarChar(500)
+  read    Boolean @default(false)
+
+  created_at DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at DateTime? @updatedAt
+
+  @@map("notificationusers")
+}
+
+model NotificationUserBlog {
+  id          String    @id @default(uuid())
+  userBlog    UserBlog? @relation(fields: [userBlog_id], references: [id])
+  userBlog_id String?
+  message     String    @db.VarChar(500)
+  read        Boolean   @default(false)
+
+  created_at DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at DateTime? @updatedAt
+
+  @@map("notificationuserblogs")
 }

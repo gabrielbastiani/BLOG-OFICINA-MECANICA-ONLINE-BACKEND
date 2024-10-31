@@ -54,6 +54,9 @@ import { NewsletterFindController } from "./controllers/newsletter/NewsletterFin
 // -- ROUTES EXPORTDATA --
 import { ExportDataController } from "./controllers/export_data/ExportDataController";
 
+// -- ROUTES NOTIFICATION --
+import { FindNotificationController } from "./controllers/notification/notification_user/FindNotificationController";
+
 
 
 const router = Router();
@@ -109,6 +112,11 @@ router.get('/newsletter/get_newsletters', isAuthenticated, new NewsletterFindCon
 
 // -- ROUTES EXPORTDATA --
 router.post('/export_data', isAuthenticated, new ExportDataController().handle);
+
+// -- ROUTES NOTIFICATION --
+router.get('/user/notifications', isAuthenticated, new FindNotificationController().handle);
+/* router.post('/notifications/mark-read', new NotificationController().markNotificationRead);
+router.post('/notifications/mark-all-read', new NotificationController().markAllNotificationsRead); */
 
 
 export { router }

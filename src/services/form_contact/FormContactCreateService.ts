@@ -33,6 +33,12 @@ class FormContactCreateService {
             }
         });
 
+        await prismaClient.notificationUser.create({
+            data: {
+                message: "Formulario de contato enviado"
+            }
+        });
+
         const transporter = nodemailer.createTransport({
             host: process.env.HOST_SMTP,
             port: 465,

@@ -8,9 +8,6 @@ interface CategoryPostRequest {
 
 class PostCategoryCreateService {
     async execute({ post_id, name_category, order }: CategoryPostRequest) {
-
-        console.log(post_id)
-
         const post = await prismaClient.post_category.create({
             data: {
                 post_id: post_id,
