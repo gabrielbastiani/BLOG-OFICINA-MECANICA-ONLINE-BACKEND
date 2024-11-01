@@ -4,14 +4,23 @@ import path from 'path';
 
 interface UserRequest {
     user_id: string;
+    name: string;
 }
 
 class UserDeleteService {
-    async execute({ user_id }: UserRequest) {
+    async execute({ user_id, name }: UserRequest) {
 
         const user_photo = await prismaClient.user.findUnique({
             where: {
                 id: user_id
+            }
+        });
+
+        await prismaClient.notificationUser.create({
+            data: {
+                user_id: user_id,
+                message: `Usuário ${user_photo.name} foi deletado pelo usuário ${name}.`,
+                type: "user"
             }
         });
 

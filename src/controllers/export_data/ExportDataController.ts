@@ -3,7 +3,7 @@ import { ExportDataService } from '../../services/export_data/ExportDataService'
 
 class ExportDataController {
     async handle(req: Request, res: Response) {
-        const { tableName, columns, format, customColumnNames } = req.body;
+        const { user_id, tableName, columns, format, customColumnNames } = req.body;
 
         // Valida se columns é um array de strings
         if (!Array.isArray(columns) || columns.some(col => typeof col !== 'string')) {
@@ -19,6 +19,7 @@ class ExportDataController {
 
         try {
             const { buffer, mimeType, extension } = await exportDataService.execute(
+                user_id,
                 tableName,
                 columns as string[],
                 format as 'xlsx' | 'csv',

@@ -71,6 +71,26 @@ class UserCreateService {
                 }
             });
 
+            const users_superAdmins = await prismaClient.user.findMany({
+                where: {
+                    role: RoleUser.SUPER_ADMIN
+                }
+            });
+    
+            const all_user_ids = [
+                ...users_superAdmins.map(user => user.id)
+            ];
+    
+            const notificationsData = all_user_ids.map(user_id => ({
+                user_id,
+                message: "Usuário criado com sucesso",
+                type: "user"
+            }));
+    
+            await prismaClient.notificationUser.createMany({
+                data: notificationsData
+            });
+
             const requiredPath = path.join(__dirname, `../emails_transacionais/criacao_de_employee.ejs`);
 
             const data = await ejs.renderFile(requiredPath, {

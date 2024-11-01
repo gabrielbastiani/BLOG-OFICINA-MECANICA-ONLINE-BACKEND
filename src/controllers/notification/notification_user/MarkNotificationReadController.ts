@@ -4,7 +4,7 @@ import { MarkNotificationReadService } from '../../../services/notification/noti
 class MarkNotificationReadController {
     async handle(req: Request, res: Response) {
 
-        const { notificationUser_id } = req.body;
+        const notificationUser_id = req.query.notificationUser_id as string;
 
         const notifications = new MarkNotificationReadService();
 

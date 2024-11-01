@@ -4,6 +4,7 @@ import { CategoryCreateService } from '../../services/category/CategoryCreateSer
 class CategoryCreateController {
     async handle(req: Request, res: Response) {
         const {
+            user_id,
             name_category,
             image_category,
             description,
@@ -20,6 +21,7 @@ class CategoryCreateController {
         }
 
         const category = await create_category.execute({
+            user_id,
             name_category,
             description,
             image_category: imageToUpdate,

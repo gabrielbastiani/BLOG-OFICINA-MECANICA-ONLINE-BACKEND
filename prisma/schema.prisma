@@ -23,11 +23,11 @@ model User {
   status     StatusUser @default(Disponivel)
   role       RoleUser   @default(SUPER_ADMIN)
 
-  post Post[]
+  post             Post[]
+  notificationUser NotificationUser[]
 
-  created_at       DateTime           @default(now()) @db.Timestamptz(3)
-  updated_at       DateTime           @updatedAt
-  NotificationUser NotificationUser[]
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt
 
   @@map("users")
 }
@@ -52,9 +52,11 @@ model UserBlog {
   password   String
   status     StatusUserBlog @default(Disponivel)
 
-  created_at           DateTime               @default(now()) @db.Timestamptz(3)
-  updated_at           DateTime               @updatedAt
-  NotificationUserBlog NotificationUserBlog[]
+  notificationUserBlog NotificationUserBlog[]
+  comment              Comment[]
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt
 
   @@map("userblogs")
 }
@@ -151,8 +153,8 @@ model Comment {
   id           String        @id @default(uuid())
   post         Post          @relation(fields: [post_id], references: [id])
   post_id      String
-  author       String        @db.VarChar(200)
-  slug_author  String
+  userBlog     UserBlog      @relation(fields: [userBlog_id], references: [id])
+  userBlog_id  String
   comment      String        @db.VarChar(5000)
   nivel        Int?
   parentId     String?
@@ -202,6 +204,7 @@ model NotificationUser {
   id      String  @id @default(uuid())
   user    User?   @relation(fields: [user_id], references: [id])
   user_id String?
+  type    String
   message String  @db.VarChar(500)
   read    Boolean @default(false)
 
@@ -215,6 +218,7 @@ model NotificationUserBlog {
   id          String    @id @default(uuid())
   userBlog    UserBlog? @relation(fields: [userBlog_id], references: [id])
   userBlog_id String?
+  type        String
   message     String    @db.VarChar(500)
   read        Boolean   @default(false)
 

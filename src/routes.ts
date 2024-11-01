@@ -56,6 +56,8 @@ import { ExportDataController } from "./controllers/export_data/ExportDataContro
 
 // -- ROUTES NOTIFICATION --
 import { FindNotificationController } from "./controllers/notification/notification_user/FindNotificationController";
+import { MarkNotificationReadController } from "./controllers/notification/notification_user/MarkNotificationReadController";
+import { MarkAllNotificationsAsReadController } from "./controllers/notification/notification_user/MarkAllNotificationsAsReadController";
 
 
 
@@ -115,8 +117,8 @@ router.post('/export_data', isAuthenticated, new ExportDataController().handle);
 
 // -- ROUTES NOTIFICATION --
 router.get('/user/notifications', isAuthenticated, new FindNotificationController().handle);
-/* router.post('/notifications/mark-read', new NotificationController().markNotificationRead);
-router.post('/notifications/mark-all-read', new NotificationController().markAllNotificationsRead); */
+router.put('/notifications/mark-read', isAuthenticated, new MarkNotificationReadController().handle);
+router.put('/notifications/mark-all-read', isAuthenticated, new MarkAllNotificationsAsReadController().handle);
 
 
 export { router }

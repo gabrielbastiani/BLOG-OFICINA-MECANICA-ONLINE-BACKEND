@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 require('dotenv/config');
 import ejs from 'ejs';
 import path from "path";
+import { RoleUser } from "@prisma/client";
 
 interface FormRequest {
     email_user: string;
@@ -33,10 +34,31 @@ class FormContactCreateService {
             }
         });
 
-        await prismaClient.notificationUser.create({
-            data: {
-                message: "Formulario de contato enviado"
+        const users_superAdmins = await prismaClient.user.findMany({
+            where: {
+                role: RoleUser.SUPER_ADMIN
             }
+        });
+
+        const users_admins = await prismaClient.user.findMany({
+            where: {
+                role: RoleUser.ADMIN
+            }
+        });
+
+        const all_user_ids = [
+            ...users_superAdmins.map(user => user.id),
+            ...users_admins.map(user => user.id)
+        ];
+
+        const notificationsData = all_user_ids.map(user_id => ({
+            user_id,
+            message: "Formulario de contato enviado",
+            type: "contact_form"
+        }));
+
+        await prismaClient.notificationUser.createMany({
+            data: notificationsData
         });
 
         const transporter = nodemailer.createTransport({

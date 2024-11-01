@@ -5,10 +5,11 @@ class PostDeleteController {
     async handle(req: Request, res: Response) {
 
         const post_id = req.query.post_id as string;
+        const user_id = req.query.user_id as string;
 
         const post_delete = new PostDeleteService();
 
-        const post = await post_delete.execute({ post_id });
+        const post = await post_delete.execute({ post_id, user_id });
 
         return res.json(post);
 

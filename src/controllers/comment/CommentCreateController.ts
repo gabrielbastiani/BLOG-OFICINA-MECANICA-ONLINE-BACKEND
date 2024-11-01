@@ -5,7 +5,7 @@ class CommentCreateController {
     async handle(req: Request, res: Response) {
         const {
             post_id,
-            author,
+            userBlog_id,
             comment,
             parentId,
             nivel
@@ -15,7 +15,7 @@ class CommentCreateController {
 
         const comments = await create_comment.execute({
             post_id,
-            author,
+            userBlog_id,
             comment,
             parentId,
             nivel
