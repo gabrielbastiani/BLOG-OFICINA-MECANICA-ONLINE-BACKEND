@@ -1,3 +1,4 @@
+import moment from "moment";
 import prismaClient from "../../prisma";
 import { Prisma } from "@prisma/client";
 
@@ -26,8 +27,8 @@ class FormContactFindService {
             ...(
                 startDate && endDate ? {
                     created_at: {
-                        gte: new Date(startDate),
-                        lte: new Date(endDate)
+                        gte: new Date(moment(startDate).format('DD/MM/YYYY HH:mm')),
+                        lte: new Date(moment(endDate).format('DD/MM/YYYY HH:mm'))
                     }
                 } : {}
             )
