@@ -27,12 +27,12 @@ class FormContactFindService {
             ...(
                 startDate && endDate ? {
                     created_at: {
-                        gte: new Date(moment(startDate).format('DD/MM/YYYY HH:mm')),
-                        lte: new Date(moment(endDate).format('DD/MM/YYYY HH:mm'))
+                        gte: moment(startDate).startOf('day').toISOString(),
+                        lte: moment(endDate).endOf('day').toISOString(),
                     }
                 } : {}
             )
-        };
+        };        
 
         const all_contacts_form = await prismaClient.form_contact.findMany({
             where: whereClause,
