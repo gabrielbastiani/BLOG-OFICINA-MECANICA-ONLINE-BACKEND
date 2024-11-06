@@ -58,17 +58,21 @@ import { ExportDataController } from "./controllers/export_data/ExportDataContro
 import { FindNotificationController } from "./controllers/notification/notification_user/FindNotificationController";
 import { MarkNotificationReadController } from "./controllers/notification/notification_user/MarkNotificationReadController";
 import { MarkAllNotificationsAsReadController } from "./controllers/notification/notification_user/MarkAllNotificationsAsReadController";
+import { BulkUserImportController } from "./controllers/user/BulkUserImportController";
 
 
 
 const router = Router();
-const upload = multer(uploadConfig.upload("./images"));
+const upload_image = multer(uploadConfig.upload("./images"));
+const upload_excel_file = multer(uploadConfig.upload("./uploads"));
+
 
 // -- ROUTES USERS --
-router.post('/user/create', upload.single('file'), new UserCreateController().handle);
+router.post('/user/create', upload_image.single('file'), new UserCreateController().handle);
+router.post("/user/bulk_users", isAuthenticated, upload_excel_file.single("file"), new BulkUserImportController().handle);
 router.post('/user/session', new UserAuthController().handle);
 router.get('/user/me', isAuthenticated, new UserDetailController().handle);
-router.put('/user/update', isAuthenticated, upload.single('file'), new UserUpdateDataController().handle);
+router.put('/user/update', isAuthenticated, upload_image.single('file'), new UserUpdateDataController().handle);
 router.put('/user/delete_photo', isAuthenticated, new UserPhotoDeleteController().handle);
 router.post('/user/email_recovery_password', new RequestPasswordUserRecoveryController().handle);
 router.put('/user/recovery_password', new PasswordRecoveryUserController().handle);
@@ -77,15 +81,15 @@ router.get('/user/all_users', isAuthenticated, new AllUserController().handle);
 router.get('/user/publicSuper_user', new SuperUserPublicController().handle);
 
 // -- ROUTES CATEGORY --
-router.post('/category/create', isAuthenticated, upload.single('file'), new CategoryCreateController().handle);
-router.put('/category/update', isAuthenticated, upload.single('file'), new CategoryUpdateDataController().handle);
+router.post('/category/create', isAuthenticated, upload_image.single('file'), new CategoryCreateController().handle);
+router.put('/category/update', isAuthenticated, upload_image.single('file'), new CategoryUpdateDataController().handle);
 router.put('/category/delete_image', isAuthenticated, new CategoryDeleteImageController().handle);
 router.delete('/category/delete_category', isAuthenticated, new CategoryDeleteController().handle);
 router.get('/category/cms', isAuthenticated, new CategoryPagesController().handle);
 
 // -- ROUTES POST --
-router.post('/post/create_post', isAuthenticated, upload.single('file'), new PostCreateController().handle);
-router.put('/post/update', isAuthenticated, upload.single('file'), new PostUpdateDataController().handle);
+router.post('/post/create_post', isAuthenticated, upload_image.single('file'), new PostCreateController().handle);
+router.put('/post/update', isAuthenticated, upload_image.single('file'), new PostUpdateDataController().handle);
 router.delete('/post/delete_post', isAuthenticated, new PostDeleteController().handle);
 router.get('/post/cms', isAuthenticated, new PostPagesController().handle);
 
