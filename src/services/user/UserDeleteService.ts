@@ -3,46 +3,57 @@ import fs from 'fs';
 import path from 'path';
 
 interface UserRequest {
-    user_id: string;
-    name: string;
+    id_delete: string[];
+    name?: string;
 }
 
 class UserDeleteService {
-    async execute({ user_id, name }: UserRequest) {
+    async execute({ id_delete, name }: UserRequest) {
 
-        const user_photo = await prismaClient.user.findUnique({
+        const users = await prismaClient.user.findMany({
             where: {
-                id: user_id
+                id: {
+                    in: id_delete
+                }
             }
         });
 
-        await prismaClient.notificationUser.create({
-            data: {
-                user_id: user_id,
-                message: `Usuário ${user_photo.name} foi deletado pelo usuário ${name}.`,
+        // Criação de notificações para cada usuário deletado
+        await prismaClient.notificationUser.createMany({
+            data: users.map((user) => ({
+                user_id: user.id,
+                message: `Usuário ${user.name} foi deletado pelo usuário ${name}.`,
                 type: "user"
+            }))
+        });
+
+        // Deleção das imagens associadas aos usuários
+        users.forEach((user) => {
+            if (user.image_user) {
+                const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + user.image_user);
+                console.log(`Deleting image: ${imagePath}`);
+
+                fs.unlink(imagePath, (err) => {
+                    if (err) {
+                        console.error(`Failed to delete image for user ${user.id}: ${err.message}`);
+                    } else {
+                        console.log(`Image for user ${user.id} deleted successfully`);
+                    }
+                });
             }
         });
 
-        const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + user_photo.image_user);
-        console.log(`Deleting image: ${imagePath}`);
-        fs.unlink(imagePath, (err) => {
-            if (err) {
-                console.error(`Failed to delete old image: ${err.message}`);
-            } else {
-                console.log('Old image deleted successfully');
-            }
-        });
-
-        const user = await prismaClient.user.delete({
+        // Remoção dos usuários do banco de dados
+        const deletedUsers = await prismaClient.user.deleteMany({
             where: {
-                id: user_id
+                id: {
+                    in: id_delete
+                }
             }
         });
 
-        return user;
-
+        return deletedUsers;
     }
 }
 
-export { UserDeleteService }
+export { UserDeleteService };

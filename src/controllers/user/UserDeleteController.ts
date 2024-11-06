@@ -1,19 +1,19 @@
-import { Request, Response } from 'express'
-import { UserDeleteService } from '../../services/user/UserDeleteService'
+import { Request, Response } from 'express';
+import { UserDeleteService } from '../../services/user/UserDeleteService';
 
 class UserDeleteController {
     async handle(req: Request, res: Response) {
+        let { id_delete, name } = req.body;
 
-        const user_id = req.query.user_id as string;
-        const name = req.query.name as string;
+        if (!Array.isArray(id_delete)) {
+            id_delete = [id_delete];
+        }
 
         const detail_user = new UserDeleteService();
-
-        const user = await detail_user.execute({ user_id, name });
+        const user = await detail_user.execute({ id_delete, name });
 
         return res.json(user);
-
     }
 }
 
-export { UserDeleteController }
+export { UserDeleteController };

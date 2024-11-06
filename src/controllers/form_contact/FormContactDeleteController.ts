@@ -3,12 +3,12 @@ import { FormContactDeleteService } from '../../services/form_contact/FormContac
 
 class FormContactDeleteController {
     async handle(req: Request, res: Response) {
-        const { form_contact_ids } = req.body;
+        const { id_delete } = req.body;
 
         const formContactDeleteService = new FormContactDeleteService();
 
         const deletedForms = await formContactDeleteService.execute({
-            form_contact_ids
+            id_delete
         });
 
         return res.json(deletedForms);
