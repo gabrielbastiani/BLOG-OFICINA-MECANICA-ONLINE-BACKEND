@@ -5,6 +5,8 @@ import { isAuthenticated } from "./middlewares/isAuthenticated";
 
 // -- ROUTES USERS --
 import { UserCreateController } from "./controllers/user/UserCreateController";
+import { BulkUserImportController } from "./controllers/user/BulkUserImportController";
+import { GenerateExcelController } from "./controllers/user/GenerateExcelController";
 import { UserUpdateDataController } from "./controllers/user/UserUpdateDataController";
 import { UserAuthController } from "./controllers/user/UserAuthController";
 import { UserDetailController } from "./controllers/user/UserDetailController";
@@ -58,18 +60,20 @@ import { ExportDataController } from "./controllers/export_data/ExportDataContro
 import { FindNotificationController } from "./controllers/notification/notification_user/FindNotificationController";
 import { MarkNotificationReadController } from "./controllers/notification/notification_user/MarkNotificationReadController";
 import { MarkAllNotificationsAsReadController } from "./controllers/notification/notification_user/MarkAllNotificationsAsReadController";
-import { BulkUserImportController } from "./controllers/user/BulkUserImportController";
+import { FindUsersNotificationController } from "./controllers/notification/notification_user/FindUsersNotificationController";
+import { NotificationDeleteController } from "./controllers/notification/notification_user/NotificationDeleteController";
 
 
 
 const router = Router();
 const upload_image = multer(uploadConfig.upload("./images"));
-const upload_excel_file = multer(uploadConfig.upload("./uploads"));
+const temp_file = multer(uploadConfig.upload("./temp_file"));
 
 
 // -- ROUTES USERS --
 router.post('/user/create', upload_image.single('file'), new UserCreateController().handle);
-router.post("/user/bulk_users", isAuthenticated, upload_excel_file.single("file"), new BulkUserImportController().handle);
+router.post("/user/bulk_users", isAuthenticated, temp_file.single("file"), new BulkUserImportController().handle);
+router.get('/user/download_excel', isAuthenticated, new GenerateExcelController().handle);
 router.post('/user/session', new UserAuthController().handle);
 router.get('/user/me', isAuthenticated, new UserDetailController().handle);
 router.put('/user/update', isAuthenticated, upload_image.single('file'), new UserUpdateDataController().handle);
@@ -123,6 +127,8 @@ router.post('/export_data', isAuthenticated, new ExportDataController().handle);
 router.get('/user/notifications', isAuthenticated, new FindNotificationController().handle);
 router.put('/notifications/mark-read', isAuthenticated, new MarkNotificationReadController().handle);
 router.put('/notifications/mark-all-read', isAuthenticated, new MarkAllNotificationsAsReadController().handle);
+router.get('/notifications_user/central_notifications', isAuthenticated, new FindUsersNotificationController().handle);
+router.delete('/notifications_user/delete_notification', isAuthenticated, new NotificationDeleteController().handle);
 
 
 export { router }
