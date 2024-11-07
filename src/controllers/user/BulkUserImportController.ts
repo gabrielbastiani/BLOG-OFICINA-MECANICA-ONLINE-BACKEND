@@ -3,7 +3,7 @@ import { BulkUserImportService } from "../../services/user/BulkUserImportService
 import multer from "multer";
 import path from "path";
 
-const upload = multer({ dest: path.resolve(__dirname, "../../../temp") });
+const upload = multer({ dest: path.resolve(__dirname, "../../../temp_file") });
 
 class BulkUserImportController {
     async handle(req: Request, res: Response) {
