@@ -14,6 +14,8 @@ class AllUserController {
             endDate
         } = req.query;
 
+        const user_id = req.user_id; // Assumindo que o middleware de autenticação já insere o ID do usuário autenticado em `req.user`
+
         const allUsers = new AllUsersService();
         const users = await allUsers.execute(
             Number(page),
@@ -22,7 +24,8 @@ class AllUserController {
             String(orderBy),
             orderDirection as Prisma.SortOrder,
             startDate ? String(startDate) : undefined,
-            endDate ? String(endDate) : undefined
+            endDate ? String(endDate) : undefined,
+            user_id
         );
 
         return res.json(users);

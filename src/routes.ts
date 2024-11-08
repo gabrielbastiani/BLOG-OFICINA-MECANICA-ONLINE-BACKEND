@@ -63,6 +63,7 @@ import { MarkAllNotificationsAsReadController } from "./controllers/notification
 import { FindUsersNotificationController } from "./controllers/notification/notification_user/FindUsersNotificationController";
 import { NotificationDeleteController } from "./controllers/notification/notification_user/NotificationDeleteController";
 import { BulkDeleteUsersController } from "./controllers/user/BulkDeleteUsersController";
+import { GenerateExcelDeleteUserController } from "./controllers/user/GenerateExcelDeleteUserController";
 
 
 
@@ -83,6 +84,7 @@ router.post('/user/email_recovery_password', new RequestPasswordUserRecoveryCont
 router.put('/user/recovery_password', new PasswordRecoveryUserController().handle);
 router.delete('/user/delete_user', isAuthenticated, new UserDeleteController().handle);
 router.post('/user/bulk_delete_users', isAuthenticated, temp_file.single('file'), new BulkDeleteUsersController().handle);
+router.get('/user/download_excel_delete_users', isAuthenticated, new GenerateExcelDeleteUserController().handle);
 router.get('/user/all_users', isAuthenticated, new AllUserController().handle);
 router.get('/user/publicSuper_user', new SuperUserPublicController().handle);
 

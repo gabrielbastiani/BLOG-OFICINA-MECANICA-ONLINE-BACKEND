@@ -1,15 +1,17 @@
 import prismaClient from "../../prisma";
 
-interface FormRequest {
-    newsletter_id: string;
+interface NewsRequest {
+    id_delete: string[];
 }
 
 class NewsletterDeleteService {
-    async execute({ newsletter_id }: FormRequest) {
+    async execute({ id_delete }: NewsRequest) {
 
-        const form = await prismaClient.newsletter.delete({
+        const form = await prismaClient.newsletter.deleteMany({
             where: {
-                id: newsletter_id
+                id: {
+                    in: id_delete
+                }
             }
         });
 

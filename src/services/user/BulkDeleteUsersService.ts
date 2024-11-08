@@ -1,41 +1,59 @@
 import prismaClient from "../../prisma";
-import * as xlsx from 'xlsx';
-import { readFileSync } from 'fs';
+import * as XLSX from "xlsx";
+import fs from "fs";
+import { RoleUser } from "@prisma/client";
 
 class BulkDeleteUsersService {
-    async execute(fileBuffer: Buffer) {
+    async execute(filePath: string, user_id: string) {
         try {
-            // Lê o arquivo da planilha com o buffer
-            const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
-
-            // Acessa a primeira planilha
+            const workbook = XLSX.readFile(filePath);
             const sheetName = workbook.SheetNames[0];
-            const sheet = workbook.Sheets[sheetName];
+            const worksheet = workbook.Sheets[sheetName];
 
-            // Converte os dados da planilha para um formato utilizável
-            const data = xlsx.utils.sheet_to_json(sheet);
+            const data = XLSX.utils.sheet_to_json<{ Email?: string }>(worksheet);
 
-            if (!data || data.length === 0) {
-                throw new Error('Planilha vazia ou dados não encontrados.');
-            }
+            const emailsToDelete = data
+                .map(user => user.Email)
+                .filter(email => email !== undefined && email !== null);
 
-            // Assumindo que a coluna de identificadores seja 'email' ou 'id'
-            const ids = data.map((row: any) => row.email || row.id).filter(Boolean);
-            if (ids.length === 0) {
-                throw new Error('Nenhum identificador encontrado na planilha.');
-            }
-
-            // Realize a exclusão no banco de dados usando os IDs
-            const result = await prismaClient.user.deleteMany({
+            const users_crate = await prismaClient.user.findUnique({
                 where: {
-                    email: { in: ids }  // ou 'id' se for baseado em ID
+                    id: user_id
                 }
             });
 
-            return result;
-        } catch (error) {
-            console.error('Erro ao processar o arquivo e deletar usuários:', error);
-            throw new Error('Erro ao processar o arquivo e deletar usuários.');
+            const users_superAdmins = await prismaClient.user.findMany({
+                where: {
+                    role: RoleUser.SUPER_ADMIN
+                }
+            });
+
+            const all_user_ids = [
+                ...users_superAdmins.map(user => user.id)
+            ];
+
+            const notificationsData = all_user_ids.map(user_id => ({
+                user_id,
+                message: `Usuário(s) deletado(s) via planilha pelo usuario ${users_crate?.name}`,
+                type: "user"
+            }));
+
+            const deleteUsers = await prismaClient.user.deleteMany({
+                where: {
+                    email: { in: emailsToDelete },
+                },
+            });
+
+            await prismaClient.notificationUser.createMany({
+                data: notificationsData
+            });
+
+            return deleteUsers;
+
+        } finally {
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
         }
     }
 }

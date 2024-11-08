@@ -3,12 +3,12 @@ import { NewsletterDeleteService } from '../../services/newsletter/NewsletterDel
 
 class NewsletterDeleteController {
     async handle(req: Request, res: Response) {
-        const newsletter_id = req.query.newsletter_id as string;
+        const { id_delete } = req.body
 
         const news = new NewsletterDeleteService();
 
         const latters = await news.execute({
-            newsletter_id
+            id_delete
         });
 
         return res.json(latters)

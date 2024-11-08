@@ -10,11 +10,11 @@ class AllUsersService {
         orderBy: string = "created_at",
         orderDirection: Prisma.SortOrder = "desc",
         startDate?: string,
-        endDate?: string
+        endDate?: string,
+        user_id?: string  // ID do usuário atual
     ) {
         const skip = (page - 1) * limit;
 
-        // Construção da cláusula 'where' com filtro de texto e data
         const whereClause: Prisma.UserWhereInput = {
             ...(
                 search ? {
@@ -31,8 +31,10 @@ class AllUsersService {
                         lte: moment(endDate).endOf('day').toISOString(),
                     }
                 } : {}
-            )
-        };        
+            ),
+            role: { in: ["ADMIN", "EMPLOYEE"] },
+            id: { not: user_id }  // Exclui o usuário atual
+        };
 
         const all_users = await prismaClient.user.findMany({
             where: whereClause,
