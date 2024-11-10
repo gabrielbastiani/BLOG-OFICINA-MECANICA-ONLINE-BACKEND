@@ -75,19 +75,20 @@ model PasswordRecoveryUser {
 
 model Category {
   id                 String         @id @default(uuid())
-  name_category      String         @unique @db.VarChar(300)
+  name_category      String         @unique
   slug_name_category String         @db.VarChar(300)
   image_category     String?
   description        String?        @db.VarChar(15725)
-  status             StatusCategory @default(Disponivel)
   order              Int?
+  status             StatusCategory @default(Disponivel)
   parentId           String?
-  nivel              Int?
-
-  post_category Post_category[]
+  parent             Category?      @relation("Subcategories", fields: [parentId], references: [id])
+  children           Category[]     @relation("Subcategories")
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt
+
+  post_category Post_category[]
 
   @@map("categories")
 }

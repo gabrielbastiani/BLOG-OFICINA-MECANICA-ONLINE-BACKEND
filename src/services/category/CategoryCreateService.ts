@@ -6,13 +6,15 @@ interface CategoryRequest {
     name_category: string;
     image_category?: string;
     description?: string;
-    order?: number;
     parentId?: string;
-    nivel?: number;
 }
 
 class CategoryCreateService {
-    async execute({ user_id, name_category, image_category, description, order, parentId, nivel }: CategoryRequest) {
+    async execute({ user_id, name_category, image_category, description, parentId }: CategoryRequest) {
+
+        if (!name_category) {
+            throw new Error("O nome da categoria é obrigatório.");
+        }
 
         function removerAcentos(s: any) {
             return s.normalize('NFD')
@@ -25,13 +27,11 @@ class CategoryCreateService {
 
         const category = await prismaClient.category.create({
             data: {
-                name_category: name_category,
+                name_category,
                 slug_name_category: removerAcentos(name_category),
                 image_category: image_category,
                 description: description,
-                order: Number(order),
-                parentId: parentId,
-                nivel: Number(nivel)
+                parentId: parentId || null
             }
         });
 
@@ -40,8 +40,6 @@ class CategoryCreateService {
                 id: user_id
             }
         });
-
-        const category_create = await prismaClient.category.findFirst();
 
         const users_superAdmins = await prismaClient.user.findMany({
             where: {
@@ -62,13 +60,15 @@ class CategoryCreateService {
 
         const notificationsData = all_user_ids.map(user_id => ({
             user_id,
-            message: `Categoria ${category_create.name_category} criado pelo usuário ${user_data.name}.`,
+            message: `Categoria ${name_category} criado pelo usuário ${user_data.name}.`,
             type: "category"
         }));
 
         await prismaClient.notificationUser.createMany({
             data: notificationsData
         });
+
+        const category_create = await prismaClient.category.findMany();
 
         return category;
 

@@ -22,7 +22,7 @@ import { CategoryCreateController } from "./controllers/category/CategoryCreateC
 import { CategoryUpdateDataController } from "./controllers/category/CategoryUpdateDataController";
 import { CategoryDeleteImageController } from "./controllers/category/CategoryDeleteImageController";
 import { CategoryDeleteController } from "./controllers/category/CategoryDeleteController";
-import { CategoryPagesController } from "./controllers/category/CategoryPagesController";
+import { CategoriesController } from "./controllers/category/CategoriesController";
 
 // -- ROUTES POST --
 import { PostCreateController } from "./controllers/post/PostCreateController";
@@ -35,6 +35,7 @@ import { PostCategoryCreateController } from "./controllers/post_category/PostCa
 import { PostCategoryUpdateDataController } from "./controllers/post_category/PostCategoryUpdateDataController";
 import { PostCategoryDeleteController } from "./controllers/post_category/PostCategoryDeleteController";
 import { PostCategoryFindController } from "./controllers/post_category/PostCategoryFindController";
+import { CategoryUpdateOrderController } from "./controllers/category/CategoryUpdateOrderController";
 
 // -- ROUTES COMMENT --
 import { CommentCreateController } from "./controllers/comment/CommentCreateController";
@@ -91,9 +92,10 @@ router.get('/user/publicSuper_user', new SuperUserPublicController().handle);
 // -- ROUTES CATEGORY --
 router.post('/category/create', isAuthenticated, upload_image.single('file'), new CategoryCreateController().handle);
 router.put('/category/update', isAuthenticated, upload_image.single('file'), new CategoryUpdateDataController().handle);
+router.put('/category/updateOrder', isAuthenticated, new CategoryUpdateOrderController().handle);
 router.put('/category/delete_image', isAuthenticated, new CategoryDeleteImageController().handle);
 router.delete('/category/delete_category', isAuthenticated, new CategoryDeleteController().handle);
-router.get('/category/cms', isAuthenticated, new CategoryPagesController().handle);
+router.get('/category/cms', isAuthenticated, new CategoriesController().handle);
 
 // -- ROUTES POST --
 router.post('/post/create_post', isAuthenticated, upload_image.single('file'), new PostCreateController().handle);

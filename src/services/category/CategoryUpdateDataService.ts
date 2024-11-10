@@ -11,11 +11,10 @@ interface CategoryProps {
     status?: string;
     order?: number;
     parentId?: string;
-    nivel?: number;
 }
 
 class CategoryUpdateDataService {
-    async execute({ category_id, name_category, description, image_category, status, order, parentId, nivel }: CategoryProps) {
+    async execute({ category_id, name_category, description, image_category, status, order, parentId }: CategoryProps) {
 
         function removerAcentos(s: any) {
             return s.normalize('NFD')
@@ -66,10 +65,6 @@ class CategoryUpdateDataService {
 
         if (parentId) {
             dataToUpdate.parentId = parentId;
-        }
-
-        if (nivel) {
-            dataToUpdate.nivel = Number(nivel);
         }
 
         const update_category = await prismaClient.category.update({

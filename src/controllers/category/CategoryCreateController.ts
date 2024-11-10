@@ -8,9 +8,7 @@ class CategoryCreateController {
             name_category,
             image_category,
             description,
-            order,
-            parentId,
-            nivel
+            parentId
         } = req.body;
 
         const create_category = new CategoryCreateService();
@@ -25,9 +23,7 @@ class CategoryCreateController {
             name_category,
             description,
             image_category: imageToUpdate,
-            order,
-            parentId,
-            nivel
+            parentId
         });
 
         return res.json(category)
