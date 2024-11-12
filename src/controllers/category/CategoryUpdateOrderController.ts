@@ -3,16 +3,15 @@ import { CategoryUpdateOrderService } from '../../services/category/CategoryUpda
 
 class CategoryUpdateOrderController {
     async handle(req: Request, res: Response) {
-        const { categories } = req.body;
+        const { categoryId, parentId, order } = req.body;
+        const categoriesService = new CategoryUpdateOrderService();
 
-        if (!Array.isArray(categories)) {
-            return res.status(400).json({ error: "O formato dos dados está incorreto." });
+        try {
+            const updatedCategory = await categoriesService.execute(categoryId, parentId, order);
+            return res.json(updatedCategory);
+        } catch (error) {
+            return res.status(400).json({ message: "Erro ao atualizar a categoria.", error });
         }
-
-        const updateOrderService = new CategoryUpdateOrderService();
-        const result = await updateOrderService.execute(categories);
-
-        return res.json(result);
     }
 }
 

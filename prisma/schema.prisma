@@ -79,7 +79,7 @@ model Category {
   slug_name_category String         @db.VarChar(300)
   image_category     String?
   description        String?        @db.VarChar(15725)
-  order              Int?
+  order              Float?
   status             StatusCategory @default(Disponivel)
   parentId           String?
   parent             Category?      @relation("Subcategories", fields: [parentId], references: [id])
