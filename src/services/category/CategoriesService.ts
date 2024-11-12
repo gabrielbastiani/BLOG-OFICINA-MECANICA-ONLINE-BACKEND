@@ -1,3 +1,4 @@
+import { StatusCategory } from "@prisma/client";
 import prismaClient from "../../prisma";
 
 class CategoriesService {
@@ -19,10 +20,23 @@ class CategoriesService {
       return categories;
     }
 
-    // Fetch all root-level categories with their children recursively
     const rootCategories = await fetchChildren(null);
-    return rootCategories;
+
+    const all_categories_disponivel = await prismaClient.category.findMany({
+      where: {
+        status: StatusCategory.Disponivel
+      },
+    });
+
+    const data = {
+      rootCategories,
+      all_categories_disponivel
+    }
+
+    return data;
+
   }
+  
 }
 
 export { CategoriesService };

@@ -1,16 +1,18 @@
 import prismaClient from "../../prisma";
 
+interface UpdateCategoryOrderData {
+    draggedId: string;
+    targetId: string | null;
+}
+
 class CategoryUpdateOrderService {
-    async execute(categoryId: string, parentId: string | null, order: number) {
-        const updatedCategory = await prismaClient.category.update({
-            where: { id: categoryId },
+    async execute({ draggedId, targetId }: UpdateCategoryOrderData) {
+        return await prismaClient.category.update({
+            where: { id: draggedId },
             data: {
-                parentId,
-                order,
+                parentId: targetId,
             },
         });
-
-        return updatedCategory;
     }
 }
 
