@@ -2,7 +2,7 @@ import moment from "moment";
 import prismaClient from "../../prisma";
 import { Prisma } from "@prisma/client";
 
-class AllUsersService {
+class AllCategoriesService {
     async execute(
         page: number = 1,
         limit: number = 5,
@@ -10,17 +10,16 @@ class AllUsersService {
         orderBy: string = "created_at",
         orderDirection: Prisma.SortOrder = "desc",
         startDate?: string,
-        endDate?: string,
-        user_id?: string
+        endDate?: string
     ) {
         const skip = (page - 1) * limit;
 
-        const whereClause: Prisma.UserWhereInput = {
+        // Construção da cláusula 'where' com filtro de texto e data
+        const whereClause: Prisma.CategoryWhereInput = {
             ...(
                 search ? {
                     OR: [
-                        { name: { contains: search, mode: Prisma.QueryMode.insensitive } },
-                        { email: { contains: search, mode: Prisma.QueryMode.insensitive } },
+                        { name_category: { contains: search, mode: Prisma.QueryMode.insensitive } }
                     ]
                 } : {}
             ),
@@ -31,29 +30,27 @@ class AllUsersService {
                         lte: moment(endDate).endOf('day').toISOString(),
                     }
                 } : {}
-            ),
-            role: { in: ["ADMIN", "EMPLOYEE"] },
-            id: { not: user_id }
-        };
+            )
+        };        
 
-        const all_users = await prismaClient.user.findMany({
+        const all_categories = await prismaClient.category.findMany({
             where: whereClause,
             skip,
             take: limit,
             orderBy: { [orderBy]: orderDirection },
         });
 
-        const total_users = await prismaClient.user.count({
+        const total_categories = await prismaClient.category.count({
             where: whereClause,
         });
 
         return {
-            users: all_users,
+            categories: all_categories,
             currentPage: page,
-            totalPages: Math.ceil(total_users / limit),
-            totalUsers: total_users,
+            totalPages: Math.ceil(total_categories / limit),
+            totalCategories: total_categories,
         };
     }
 }
 
-export { AllUsersService };
+export { AllCategoriesService };

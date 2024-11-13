@@ -26,9 +26,8 @@ class CategoryCreateController {
             parentId
         });
 
-        return res.json(category)
-
+        return res.json(category);
     }
 }
 
-export { CategoryCreateController }
+export { CategoryCreateController };

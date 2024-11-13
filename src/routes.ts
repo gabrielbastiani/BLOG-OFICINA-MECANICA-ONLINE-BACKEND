@@ -36,6 +36,9 @@ import { PostCategoryUpdateDataController } from "./controllers/post_category/Po
 import { PostCategoryDeleteController } from "./controllers/post_category/PostCategoryDeleteController";
 import { PostCategoryFindController } from "./controllers/post_category/PostCategoryFindController";
 import { CategoryUpdateOrderController } from "./controllers/category/CategoryUpdateOrderController";
+import { MoveCategoryUpController } from "./controllers/category/MoveCategoryUpController";
+import { MoveCategoryDownController } from "./controllers/category/MoveCategoryDownController";
+import { AllCategoriesController } from "./controllers/category/AllCategoriesController";
 
 // -- ROUTES COMMENT --
 import { CommentCreateController } from "./controllers/comment/CommentCreateController";
@@ -93,9 +96,12 @@ router.get('/user/publicSuper_user', new SuperUserPublicController().handle);
 router.post('/category/create', isAuthenticated, upload_image.single('file'), new CategoryCreateController().handle);
 router.put('/category/update', isAuthenticated, upload_image.single('file'), new CategoryUpdateDataController().handle);
 router.put('/category/updateOrder', isAuthenticated, new CategoryUpdateOrderController().handle);
+router.put('/category/moveUp', isAuthenticated, new MoveCategoryUpController().handle);
+router.put('/category/moveDown', isAuthenticated, new MoveCategoryDownController().handle);
 router.put('/category/delete_image', isAuthenticated, new CategoryDeleteImageController().handle);
 router.delete('/category/delete_category', isAuthenticated, new CategoryDeleteController().handle);
 router.get('/category/cms', isAuthenticated, new CategoriesController().handle);
+router.get('/category/cms/all_categories', isAuthenticated, new AllCategoriesController().handle);
 
 // -- ROUTES POST --
 router.post('/post/create_post', isAuthenticated, upload_image.single('file'), new PostCreateController().handle);

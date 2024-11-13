@@ -9,12 +9,11 @@ interface CategoryProps {
     description?: string;
     image_category?: string;
     status?: string;
-    order?: number;
     parentId?: string;
 }
 
 class CategoryUpdateDataService {
-    async execute({ category_id, name_category, description, image_category, status, order, parentId }: CategoryProps) {
+    async execute({ category_id, name_category, description, image_category, status, parentId }: CategoryProps) {
 
         function removerAcentos(s: any) {
             return s.normalize('NFD')
@@ -57,10 +56,6 @@ class CategoryUpdateDataService {
 
         if (status) {
             dataToUpdate.status = status as StatusCategory;
-        }
-
-        if (order) {
-            dataToUpdate.order = Number(order);
         }
 
         if (parentId) {

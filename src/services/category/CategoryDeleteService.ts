@@ -3,26 +3,48 @@ import prismaClient from "../../prisma";
 import fs from 'fs';
 import path from 'path';
 
-interface CategoryRequest {
-    category_id: string;
-    user_id: string;
+interface UserRequest {
+    id_delete: string[];
+    name?: string;
 }
 
 class CategoryDeleteService {
-    async execute({ category_id, user_id }: CategoryRequest) {
+    async execute({ id_delete, name }: UserRequest) {
 
-        const user_data = await prismaClient.user.findUnique({
+        const categories = await prismaClient.category.findMany({
             where: {
-                id: user_id
+                id: {
+                    in: id_delete
+                }
             }
         });
 
-        const image_category = await prismaClient.category.findUnique({
-            where: {
-                id: category_id
+        // Deleção das imagens associadas aos usuários
+        categories.forEach((category) => {
+            if (category.image_category) {
+                const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + category.image_category);
+                console.log(`Deleting image: ${imagePath}`);
+
+                fs.unlink(imagePath, (err) => {
+                    if (err) {
+                        console.error(`Failed to delete image for category ${category.id}: ${err.message}`);
+                    } else {
+                        console.log(`Image for category ${category.id} deleted successfully`);
+                    }
+                });
             }
         });
 
+        // Remoção das categorias do banco de dados
+        const deleted_categories = await prismaClient.category.deleteMany({
+            where: {
+                id: {
+                    in: id_delete
+                }
+            }
+        });
+
+        // Busca de IDs dos usuários SUPER_ADMIN e ADMIN
         const users_superAdmins = await prismaClient.user.findMany({
             where: {
                 role: RoleUser.SUPER_ADMIN
@@ -40,35 +62,19 @@ class CategoryDeleteService {
             ...users_admins.map(user => user.id)
         ];
 
-        const notificationsData = all_user_ids.map(user_id => ({
-            user_id,
-            message: `Categoria ${image_category.name_category} deletada pelo usuário ${user_data.name}`,
-            type: "category"
-        }));
-
+        // Criação de notificações para cada categoria deletada e cada usuário
         await prismaClient.notificationUser.createMany({
-            data: notificationsData
+            data: categories.flatMap((category) =>
+                all_user_ids.map((user_id) => ({
+                    user_id,
+                    message: `Categoria(s) ${category.name_category} foi deletada(s) pelo usuário ${name}.`,
+                    type: "category"
+                }))
+            )
         });
 
-        const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + image_category.image_category);
-        console.log(`Deleting image: ${imagePath}`);
-        fs.unlink(imagePath, (err) => {
-            if (err) {
-                console.error(`Failed to delete old image: ${err.message}`);
-            } else {
-                console.log('Old image deleted successfully');
-            }
-        });
-
-        const category = await prismaClient.category.delete({
-            where: {
-                id: category_id
-            }
-        });
-
-        return category;
-
+        return deleted_categories;
     }
 }
 
-export { CategoryDeleteService }
+export { CategoryDeleteService };

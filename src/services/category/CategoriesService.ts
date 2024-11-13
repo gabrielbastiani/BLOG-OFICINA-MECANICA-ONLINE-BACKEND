@@ -8,7 +8,9 @@ class CategoriesService {
         where: { parentId },
         orderBy: { order: "asc" },
         include: {
-          children: true,
+          children: {
+            orderBy: { order: "asc" },
+          },
         },
       });
 

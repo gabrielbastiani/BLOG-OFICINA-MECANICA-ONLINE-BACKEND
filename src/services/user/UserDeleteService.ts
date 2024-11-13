@@ -1,3 +1,4 @@
+import { RoleUser } from "@prisma/client";
 import prismaClient from "../../prisma";
 import fs from 'fs';
 import path from 'path';
@@ -5,10 +6,11 @@ import path from 'path';
 interface UserRequest {
     id_delete: string[];
     name?: string;
+    user_id?: string;
 }
 
 class UserDeleteService {
-    async execute({ id_delete, name }: UserRequest) {
+    async execute({ id_delete, name, user_id }: UserRequest) {
 
         const users = await prismaClient.user.findMany({
             where: {
@@ -16,15 +18,6 @@ class UserDeleteService {
                     in: id_delete
                 }
             }
-        });
-
-        // Criação de notificações para cada usuário deletado
-        await prismaClient.notificationUser.createMany({
-            data: users.map((user) => ({
-                user_id: user.id,
-                message: `Usuário ${user.name} foi deletado pelo usuário ${name}.`,
-                type: "user"
-            }))
         });
 
         // Deleção das imagens associadas aos usuários
@@ -50,6 +43,15 @@ class UserDeleteService {
                     in: id_delete
                 }
             }
+        });
+
+        // Criação de notificações para cada usuário deletado
+        await prismaClient.notificationUser.createMany({
+            data: users.map((user) => ({
+                user_id: user_id,
+                message: `Usuário ${user.name} foi deletado pelo usuário ${name}.`,
+                type: "user"
+            }))
         });
 
         return deletedUsers;
