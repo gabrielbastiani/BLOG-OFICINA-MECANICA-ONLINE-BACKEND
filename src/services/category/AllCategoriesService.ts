@@ -31,13 +31,52 @@ class AllCategoriesService {
                     }
                 } : {}
             )
-        };        
+        };
 
         const all_categories = await prismaClient.category.findMany({
             where: whereClause,
             skip,
             take: limit,
             orderBy: { [orderBy]: orderDirection },
+            include: {
+                children: {
+                    include: {
+                        parent: {
+                            include: {
+                                children: {
+                                    include: {
+                                        parent: {
+                                            include: {
+                                                children: {
+                                                    include: {
+                                                        parent: {
+                                                            include: {
+                                                                children: {
+                                                                    include: {
+                                                                        parent: {
+                                                                            include: {
+                                                                                children: {
+                                                                                    include: {
+                                                                                        parent: true
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         });
 
         const total_categories = await prismaClient.category.count({

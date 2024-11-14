@@ -5,7 +5,7 @@ class CategoryUpdateDataController {
     async handle(req: Request, res: Response) {
 
         const {
-            category_id, name_category, description, status, parentId
+            category_id, name_category, description, status, parentId, order
         } = req.body;
 
         const update_category = new CategoryUpdateDataService();
@@ -21,7 +21,8 @@ class CategoryUpdateDataController {
             description,
             image_category: imageToUpdate,
             status,
-            parentId
+            parentId,
+            order
         });
 
         return res.json(category);
