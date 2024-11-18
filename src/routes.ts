@@ -73,6 +73,9 @@ import { NotificationDeleteController } from "./controllers/notification/notific
 import { BulkDeleteUsersController } from "./controllers/user/BulkDeleteUsersController";
 import { GenerateExcelDeleteUserController } from "./controllers/user/GenerateExcelDeleteUserController";
 
+// -- ROUTES TAG --
+import { CreateTagController } from "./controllers/tag/CreateTagController";
+
 
 
 const router = Router();
@@ -149,6 +152,9 @@ router.put('/notifications/mark-read', isAuthenticated, new MarkNotificationRead
 router.put('/notifications/mark-all-read', isAuthenticated, new MarkAllNotificationsAsReadController().handle);
 router.get('/notifications_user/central_notifications', isAuthenticated, new FindUsersNotificationController().handle);
 router.delete('/notifications_user/delete_notification', isAuthenticated, new NotificationDeleteController().handle);
+
+// -- ROUTES TAG --
+router.post('/tag/create_tag', isAuthenticated, new CreateTagController().handle);
 
 
 export { router }
