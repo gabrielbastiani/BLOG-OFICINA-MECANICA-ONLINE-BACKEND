@@ -23,6 +23,8 @@ import { CategoryUpdateDataController } from "./controllers/category/CategoryUpd
 import { CategoryDeleteImageController } from "./controllers/category/CategoryDeleteImageController";
 import { CategoryDeleteController } from "./controllers/category/CategoryDeleteController";
 import { CategoriesController } from "./controllers/category/CategoriesController";
+import { GenerateExcelCategoryController } from "./controllers/category/GenerateExcelCategoryController";
+import { BulkCategoryImportController } from "./controllers/category/BulkCategoryImportController";
 
 // -- ROUTES POST --
 import { PostCreateController } from "./controllers/post/PostCreateController";
@@ -39,6 +41,8 @@ import { CategoryUpdateOrderController } from "./controllers/category/CategoryUp
 import { MoveCategoryUpController } from "./controllers/category/MoveCategoryUpController";
 import { MoveCategoryDownController } from "./controllers/category/MoveCategoryDownController";
 import { AllCategoriesController } from "./controllers/category/AllCategoriesController";
+import { BulkDeleteCategoryController } from "./controllers/category/BulkDeleteCategoryController";
+import { GenerateExcelDeleteCategoryController } from "./controllers/category/GenerateExcelDeleteCategoryController";
 
 // -- ROUTES COMMENT --
 import { CommentCreateController } from "./controllers/comment/CommentCreateController";
@@ -102,6 +106,10 @@ router.put('/category/delete_image', isAuthenticated, new CategoryDeleteImageCon
 router.delete('/category/delete_category', isAuthenticated, new CategoryDeleteController().handle);
 router.get('/category/cms', isAuthenticated, new CategoriesController().handle);
 router.get('/category/cms/all_categories', isAuthenticated, new AllCategoriesController().handle);
+router.get('/category/donwload_excel_categories', isAuthenticated, new GenerateExcelCategoryController().handle);
+router.post('/category/bulk_categories', isAuthenticated, temp_file.single("file"), new BulkCategoryImportController().handle);
+router.post('/category/bulk_delete_category', isAuthenticated, temp_file.single('file'), new BulkDeleteCategoryController().handle);
+router.get('/category/download_excel_delete_category', isAuthenticated, new GenerateExcelDeleteCategoryController().handle);
 
 // -- ROUTES POST --
 router.post('/post/create_post', isAuthenticated, upload_image.single('file'), new PostCreateController().handle);

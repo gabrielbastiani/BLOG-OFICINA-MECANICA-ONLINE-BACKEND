@@ -11,7 +11,7 @@ class GenerateExcelDeleteUserController {
             const workbook = await generateExcelService.execute({ user_id });
 
             res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            res.setHeader("Content-Disposition", "attachment; filename=modelo_delete_usuarios.xlsx");
+            res.setHeader("Content-Disposition", "attachment; filename=modelo_de dados.xlsx");
 
             await workbook.xlsx.write(res);
 
