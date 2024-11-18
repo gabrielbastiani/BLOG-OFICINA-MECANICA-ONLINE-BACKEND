@@ -6,11 +6,10 @@ interface PostRequest {
     title: string;
     image_post?: string;
     text_post: string;
-    tags?: string[];
 }
 
 class PostCreateService {
-    async execute({ author, title, image_post, text_post, tags }: PostRequest) {
+    async execute({ author, title, image_post, text_post }: PostRequest) {
 
         function removerAcentos(s: any) {
             return s.normalize('NFD')
@@ -27,8 +26,7 @@ class PostCreateService {
                 title: title,
                 slug_title_post: removerAcentos(title),
                 image_post: image_post,
-                text_post: text_post,
-                tags: tags
+                text_post: text_post
             }
         });
 

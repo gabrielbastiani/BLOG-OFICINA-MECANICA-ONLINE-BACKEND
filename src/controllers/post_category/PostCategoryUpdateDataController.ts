@@ -4,20 +4,17 @@ import { PostCategoryUpdateDataService } from '../../services/post_category/Post
 class PostCategoryUpdateDataController {
     async handle(req: Request, res: Response) {
 
-        const post_category_id = req.query.post_category_id as string;
+        const categoryOnPost_id = req.query.categoryOnPost_id as string;
 
         const {
-            name_category, status, order, main_category
+            post_id
         } = req.body;
 
         const update_category = new PostCategoryUpdateDataService();
 
         const category = await update_category.execute({
-            post_category_id,
-            name_category,
-            status,
-            order,
-            main_category
+            categoryOnPost_id,
+            post_id
         });
 
         return res.json(category);

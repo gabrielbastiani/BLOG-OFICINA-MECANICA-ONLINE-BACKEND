@@ -4,7 +4,7 @@ import { PostCreateService } from '../../services/post/PostCreateService';
 class PostCreateController {
     async handle(req: Request, res: Response) {
         const {
-            author, title, image_post, text_post, tags
+            author, title, image_post, text_post
         } = req.body;
 
         const create_post = new PostCreateService();
@@ -18,8 +18,7 @@ class PostCreateController {
             author,
             title,
             text_post,
-            image_post: imageToUpdate,
-            tags
+            image_post: imageToUpdate
         });
 
         return res.json(post)

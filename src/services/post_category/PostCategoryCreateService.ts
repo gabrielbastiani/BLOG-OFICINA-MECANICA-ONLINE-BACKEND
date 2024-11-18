@@ -2,17 +2,15 @@ import prismaClient from "../../prisma";
 
 interface CategoryPostRequest {
     post_id: string;
-    name_category: string;
-    order?: number;
+    category_id: string;
 }
 
 class PostCategoryCreateService {
-    async execute({ post_id, name_category, order }: CategoryPostRequest) {
-        const post = await prismaClient.post_category.create({
+    async execute({ post_id, category_id }: CategoryPostRequest) {
+        const post = await prismaClient.categoryOnPost.create({
             data: {
                 post_id: post_id,
-                name_category: name_category,
-                order: Number(order)
+                category_id: category_id
             }
         });
 

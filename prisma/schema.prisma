@@ -74,21 +74,20 @@ model PasswordRecoveryUser {
 }
 
 model Category {
-  id                 String         @id @default(uuid())
-  name_category      String         @unique
-  slug_name_category String         @db.VarChar(300)
+  id                 String           @id @default(uuid())
+  name_category      String           @unique
+  slug_name_category String           @db.VarChar(300)
   image_category     String?
-  description        String?        @db.VarChar(15725)
-  status             StatusCategory @default(Disponivel)
-  order              Int            @default(0)
+  description        String?          @db.VarChar(15725)
+  status             StatusCategory   @default(Disponivel)
+  order              Int              @default(0)
   parentId           String?
-  parent             Category?      @relation("Subcategories", fields: [parentId], references: [id])
-  children           Category[]     @relation("Subcategories")
+  parent             Category?        @relation("Subcategories", fields: [parentId], references: [id])
+  children           Category[]       @relation("Subcategories")
+  posts              CategoryOnPost[]
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt
-
-  post_category Post_category[]
 
   @@map("categories")
 }
@@ -98,20 +97,32 @@ enum StatusCategory {
   Indisponivel
 }
 
+model Tag {
+  id            String      @id @default(uuid())
+  tag_name      String      @unique
+  slug_tag_name String
+  posts         TagOnPost[]
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt
+
+  @@map("tags")
+}
+
 model Post {
   id              String     @id @default(uuid())
-  user            User       @relation(fields: [author], references: [name])
   author          String
+  user            User       @relation(fields: [author], references: [name])
   title           String     @db.VarChar(395)
   slug_title_post String
   text_post       String
   image_post      String?
   post_like       Int?
   status          StatusPost @default(Disponivel)
-  tags            Json?
 
-  comment       Comment[]
-  post_category Post_category[]
+  tags       TagOnPost[]
+  categories CategoryOnPost[]
+  comment    Comment[]
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt
@@ -124,30 +135,26 @@ enum StatusPost {
   Indisponivel
 }
 
-model Post_category {
-  id            String             @id @default(uuid())
-  post          Post               @relation(fields: [post_id], references: [id])
-  post_id       String
-  category      Category           @relation(fields: [name_category], references: [name_category])
-  name_category String
-  order         Int?
-  status        StatusPostCategory @default(Disponivel)
-  main_category MainCategoryPost   @default(Nao)
+model CategoryOnPost {
+  id          String   @id @default(uuid())
+  post        Post     @relation(fields: [post_id], references: [id])
+  post_id     String
+  category    Category @relation(fields: [category_id], references: [id])
+  category_id String
 
-  created_at DateTime? @default(now()) @db.Timestamptz(3)
-  updated_at DateTime? @updatedAt
-
-  @@map("postcategories")
+  @@unique([post_id, category_id])
+  @@map("category_on_posts")
 }
 
-enum StatusPostCategory {
-  Disponivel
-  Indisponivel
-}
+model TagOnPost {
+  id      String @id @default(uuid())
+  post    Post   @relation(fields: [post_id], references: [id])
+  post_id String
+  tag     Tag    @relation(fields: [tag_id], references: [id])
+  tag_id  String
 
-enum MainCategoryPost {
-  Sim
-  Nao
+  @@unique([post_id, tag_id])
+  @@map("tag_on_posts")
 }
 
 model Comment {

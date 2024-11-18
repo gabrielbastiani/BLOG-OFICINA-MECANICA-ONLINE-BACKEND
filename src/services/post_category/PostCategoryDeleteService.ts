@@ -1,15 +1,15 @@
 import prismaClient from "../../prisma";
 
 interface CategoryPostRequest {
-    post_category_id: string;
+    categoryOnPost_id: string;
 }
 
 class PostCategoryDeleteService {
-    async execute({ post_category_id }: CategoryPostRequest) {
+    async execute({ categoryOnPost_id }: CategoryPostRequest) {
 
-        const post_category_delete = await prismaClient.post_category.delete({
+        const post_category_delete = await prismaClient.categoryOnPost.delete({
             where: {
-                id: post_category_id
+                id: categoryOnPost_id
             }
         });
 

@@ -2,14 +2,14 @@ import prismaClient from "../../prisma";
 
 interface CategoryPostRequest {
     post_id?: string;
-    post_category_id?: string;
+    categoryOnPost_id?: string;
 }
 
 class PostCategoryFindService {
-    async execute({ post_id, post_category_id }: CategoryPostRequest) {
+    async execute({ post_id, categoryOnPost_id }: CategoryPostRequest) {
 
         if (post_id) {
-            const post_categories = await prismaClient.post_category.findMany({
+            const post_categories = await prismaClient.categoryOnPost.findMany({
                 where: {
                     post_id: post_id
                 }
@@ -18,10 +18,10 @@ class PostCategoryFindService {
             return post_categories;
         }
 
-        if (post_category_id) {
-            const post_category = await prismaClient.post_category.findUnique({
+        if (categoryOnPost_id) {
+            const post_category = await prismaClient.categoryOnPost.findUnique({
                 where: {
-                    id: post_category_id
+                    id: categoryOnPost_id
                 }
             });
 

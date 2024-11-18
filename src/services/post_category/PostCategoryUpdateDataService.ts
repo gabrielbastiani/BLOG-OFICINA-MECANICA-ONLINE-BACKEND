@@ -1,38 +1,23 @@
-import { MainCategoryPost, StatusCategory } from '@prisma/client';
+import { StatusCategory } from '@prisma/client';
 import prismaClient from '../../prisma';
 
 interface PostCategoryProps {
-    post_category_id: string;
-    name_category?: string;
-    status?: string;
-    main_category?: string;
-    order?: number;
+    categoryOnPost_id: string;
+    post_id?: string;
 }
 
 class PostCategoryUpdateDataService {
-    async execute({ post_category_id, name_category, status, order, main_category }: PostCategoryProps) {
+    async execute({categoryOnPost_id, post_id }: PostCategoryProps) {
 
         const dataToUpdate: any = {};
 
-        if (name_category) {
-            dataToUpdate.name_category = name_category;
+        if (post_id) {
+            dataToUpdate.post_id = post_id;
         }
 
-        if (status) {
-            dataToUpdate.status = status as StatusCategory;
-        }
-
-        if (order) {
-            dataToUpdate.order = Number(order);
-        }
-
-        if (main_category) {
-            dataToUpdate.main_category = main_category as MainCategoryPost;
-        }
-
-        const update_category = await prismaClient.post_category.update({
+        const update_category = await prismaClient.categoryOnPost.update({
             where: {
-                id: post_category_id
+                id:categoryOnPost_id
             },
             data: dataToUpdate
         });

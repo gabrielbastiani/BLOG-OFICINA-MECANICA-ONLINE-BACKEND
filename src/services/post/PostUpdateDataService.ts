@@ -10,11 +10,10 @@ interface PostProps {
     text_post?: string;
     image_post?: string;
     status?: string;
-    tags?: string[];
 }
 
 class PostUpdateDataService {
-    async execute({ post_id, author, title, text_post, image_post, status, tags }: PostProps) {
+    async execute({ post_id, author, title, text_post, image_post, status }: PostProps) {
 
         function removerAcentos(s: any) {
             return s.normalize('NFD')
@@ -61,10 +60,6 @@ class PostUpdateDataService {
 
         if (text_post) {
             dataToUpdate.text_post = text_post;
-        }
-
-        if (tags) {
-            dataToUpdate.tags = tags;
         }
 
         const update_post = await prismaClient.post.update({
