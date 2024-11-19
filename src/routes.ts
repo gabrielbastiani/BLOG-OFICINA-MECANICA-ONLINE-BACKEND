@@ -170,4 +170,5 @@ router.get('/tag/all_tags', isAuthenticated, new AllTagController().handle);
 router.delete('/tag/delete_tag', isAuthenticated, new TagDeleteController().handle);
 router.put('/tag/update', isAuthenticated, new UpdateTagController().handle);
 
+
 export { router }
