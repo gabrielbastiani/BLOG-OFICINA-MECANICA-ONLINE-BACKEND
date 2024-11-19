@@ -119,6 +119,7 @@ model Post {
   image_post      String?
   post_like       Int?
   status          StatusPost @default(Disponivel)
+  publish_at      DateTime?
 
   tags       TagOnPost[]
   categories CategoryOnPost[]
