@@ -75,6 +75,13 @@ import { GenerateExcelDeleteUserController } from "./controllers/user/GenerateEx
 
 // -- ROUTES TAG --
 import { CreateTagController } from "./controllers/tag/CreateTagController";
+import { GenerateExcelTagController } from "./controllers/tag/GenerateExcelTagController";
+import { BulkTagsImportController } from "./controllers/tag/BulkTagsImportController";
+import { BulkDeleteTagsController } from "./controllers/tag/BulkDeleteTagsController";
+import { GenerateExcelDeleteTagController } from "./controllers/tag/GenerateExcelDeleteTagController";
+import { AllTagController } from "./controllers/tag/AllTagController";
+import { TagDeleteController } from "./controllers/tag/TagDeleteController";
+import { UpdateTagController } from "./controllers/tag/UpdateTagController";
 
 
 
@@ -155,6 +162,12 @@ router.delete('/notifications_user/delete_notification', isAuthenticated, new No
 
 // -- ROUTES TAG --
 router.post('/tag/create_tag', isAuthenticated, new CreateTagController().handle);
-
+router.get('/tag/donwload_excel_tag', isAuthenticated, new GenerateExcelTagController().handle);
+router.post('/tag/bulk_tags', isAuthenticated, temp_file.single("file"), new BulkTagsImportController().handle);
+router.post('/tag/bulk_delete_tags', isAuthenticated, temp_file.single('file'), new BulkDeleteTagsController().handle);
+router.get('/tag/download_excel_delete_tags', isAuthenticated, new GenerateExcelDeleteTagController().handle);
+router.get('/tag/all_tags', isAuthenticated, new AllTagController().handle);
+router.delete('/tag/delete_tag', isAuthenticated, new TagDeleteController().handle);
+router.put('/tag/update', isAuthenticated, new UpdateTagController().handle);
 
 export { router }

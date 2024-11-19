@@ -5,7 +5,7 @@ class PostUpdateDataController {
     async handle(req: Request, res: Response) {
 
         const {
-            post_id, author, title, status, text_post, tags
+            post_id, author, title, status, text_post
         } = req.body;
 
         const update_post = new PostUpdateDataService();
@@ -21,8 +21,7 @@ class PostUpdateDataController {
             title,
             image_post: imageToUpdate,
             status,
-            text_post,
-            tags: tags || []
+            text_post
         });
 
         return res.json(post);
