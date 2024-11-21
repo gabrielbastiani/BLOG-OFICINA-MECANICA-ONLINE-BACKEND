@@ -3,6 +3,7 @@ import 'express-async-errors';
 import cors from 'cors';
 import { router } from './routes';
 import path from 'path';
+import "./services/post/PostPublishScheduler";
 
 const app = express();
 app.use(cors());
@@ -17,7 +18,6 @@ app.use(
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof Error) {
-        //Se for uma instancia do tipo error
         return res.status(400).json({
             error: err.message
         });
@@ -28,6 +28,5 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         message: 'Internal server error.'
     });
 });
-
 
 app.listen(process.env.PORT || 3333, () => console.log('Servidor online!!!!'));

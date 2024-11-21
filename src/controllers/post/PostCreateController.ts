@@ -1,31 +1,37 @@
-import { Request, Response } from 'express';
-import { PostCreateService } from '../../services/post/PostCreateService';
+import { Request, Response } from "express";
+import { PostCreateService } from "../../services/post/PostCreateService";
 
 class PostCreateController {
   async handle(req: Request, res: Response) {
-    const {
-      author, title, text_post, tags, categories, publish_at
-    } = req.body;
+    try {
+      const { author, title, text_post, publish_at, status } = req.body;
 
-    const create_post = new PostCreateService();
+      const tags = req.body.tags ? JSON.parse(req.body.tags) : [];
+      const categories = req.body.categories ? JSON.parse(req.body.categories) : [];
 
-    let imageToUpdate = req.body.image_post;
-    if (!req.body.image_post && req.file) {
-      imageToUpdate = req.file.filename;
+      let imageToUpdate = req.body.image_post;
+      if (!req.body.image_post && req.file) {
+        imageToUpdate = req.file.filename;
+      }
+
+      const create_post = new PostCreateService();
+
+      const post = await create_post.execute({
+        author,
+        title,
+        text_post,
+        image_post: imageToUpdate,
+        status: status || "Indisponivel",
+        publish_at: publish_at ? new Date(publish_at) : undefined,
+        tags,
+        categories,
+      });
+
+      return res.status(201).json(post);
+    } catch (error) {
+      console.error(error);
+      return res.status(400).json({ error: error.message || "Erro ao criar o post" });
     }
-
-    const post = await create_post.execute({
-      author,
-      title,
-      text_post,
-      image_post: imageToUpdate,
-      status: req.body.status || "Disponivel", // Valor padrão
-      publish_at: publish_at ? new Date(publish_at) : undefined, // Converter para Date
-      tags,
-      categories
-    });
-
-    return res.json(post);
   }
 }
 
