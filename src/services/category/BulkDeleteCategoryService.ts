@@ -2,6 +2,7 @@ import prismaClient from "../../prisma";
 import * as XLSX from "xlsx";
 import fs from "fs";
 import { RoleUser } from "@prisma/client";
+import path from "path";
 
 class BulkDeleteCategoryService {
     async execute(filePath: string, user_id: string) {
@@ -15,6 +16,14 @@ class BulkDeleteCategoryService {
             const categoryToDelete = data
                 .map(category => category.Nome)
                 .filter(name_category => name_category !== undefined && name_category !== null);
+
+            const categories = await prismaClient.category.findMany({
+                where: {
+                    name_category: {
+                        in: categoryToDelete
+                    }
+                }
+            });
 
             const users_crate = await prismaClient.user.findUnique({
                 where: {
@@ -37,6 +46,21 @@ class BulkDeleteCategoryService {
                 message: `Categoria(s) deletada(s) via planilha pelo usuario ${users_crate?.name}`,
                 type: "category"
             }));
+
+            categories.forEach((category) => {
+                if (category.image_category) {
+                    const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + category.image_category);
+                    console.log(`Deleting image: ${imagePath}`);
+
+                    fs.unlink(imagePath, (err) => {
+                        if (err) {
+                            console.error(`Failed to delete image for category ${category.id}: ${err.message}`);
+                        } else {
+                            console.log(`Image for category ${category.id} deleted successfully`);
+                        }
+                    });
+                }
+            });
 
             const delete_category = await prismaClient.category.deleteMany({
                 where: {

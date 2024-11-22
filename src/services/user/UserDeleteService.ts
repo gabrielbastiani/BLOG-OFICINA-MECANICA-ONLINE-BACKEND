@@ -20,7 +20,6 @@ class UserDeleteService {
             }
         });
 
-        // Deleção das imagens associadas aos usuários
         users.forEach((user) => {
             if (user.image_user) {
                 const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + user.image_user);
@@ -36,7 +35,6 @@ class UserDeleteService {
             }
         });
 
-        // Remoção dos usuários do banco de dados
         const deletedUsers = await prismaClient.user.deleteMany({
             where: {
                 id: {
@@ -45,7 +43,6 @@ class UserDeleteService {
             }
         });
 
-        // Criação de notificações para cada usuário deletado
         await prismaClient.notificationUser.createMany({
             data: users.map((user) => ({
                 user_id: user_id,

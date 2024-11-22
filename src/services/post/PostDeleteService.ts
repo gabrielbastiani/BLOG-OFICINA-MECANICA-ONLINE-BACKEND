@@ -3,23 +3,42 @@ import prismaClient from "../../prisma";
 import fs from 'fs';
 import path from 'path';
 
-interface PostRequest {
-    post_id: string;
-    user_id: string;
+interface PostProps {
+    id_delete: string[];
+    name?: string;
 }
 
 class PostDeleteService {
-    async execute({ post_id, user_id }: PostRequest) {
+    async execute({ id_delete, name }: PostProps) {
 
-        const post_data = await prismaClient.post.findUnique({
+        const posts = await prismaClient.post.findMany({
             where: {
-                id: post_id
+                id: {
+                    in: id_delete
+                }
             }
         });
 
-        const user_data = await prismaClient.user.findUnique({
+        posts.forEach((post) => {
+            if (post.image_post) {
+                const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + post.image_post);
+                console.log(`Deleting image: ${imagePath}`);
+
+                fs.unlink(imagePath, (err) => {
+                    if (err) {
+                        console.error(`Failed to delete image for post ${post.id}: ${err.message}`);
+                    } else {
+                        console.log(`Image for post ${post.id} deleted successfully`);
+                    }
+                });
+            }
+        });
+
+        const deleted_posts = await prismaClient.post.deleteMany({
             where: {
-                id: user_id
+                id: {
+                    in: id_delete
+                }
             }
         });
 
@@ -40,35 +59,18 @@ class PostDeleteService {
             ...users_admins.map(user => user.id)
         ];
 
-        const notificationsData = all_user_ids.map(user_id => ({
-            user_id,
-            message: `Post de titulo ${post_data.title} deletado pelo usuário ${user_data.name}`,
-            type: "post"
-        }));
-
         await prismaClient.notificationUser.createMany({
-            data: notificationsData
+            data: posts.flatMap((post) =>
+                all_user_ids.map((user_id) => ({
+                    user_id,
+                    message: `Post(s) ${post.title} foi deletada(s) pelo usuário ${name}.`,
+                    type: "post"
+                }))
+            )
         });
 
-        const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + post_data.image_post);
-        console.log(`Deleting image: ${imagePath}`);
-        fs.unlink(imagePath, (err) => {
-            if (err) {
-                console.error(`Failed to delete old image: ${err.message}`);
-            } else {
-                console.log('Old image deleted successfully');
-            }
-        });
-
-        const post = await prismaClient.post.delete({
-            where: {
-                id: post_id
-            }
-        });
-
-        return post;
-
+        return deleted_posts;
     }
 }
 
-export { PostDeleteService }
+export { PostDeleteService };

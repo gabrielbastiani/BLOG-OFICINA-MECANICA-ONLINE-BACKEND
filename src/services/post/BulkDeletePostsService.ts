@@ -3,18 +3,18 @@ import * as XLSX from "xlsx";
 import fs from "fs";
 import { RoleUser } from "@prisma/client";
 
-class BulkDeleteTagsService {
+class BulkDeletePostsService {
     async execute(filePath: string, user_id: string) {
         try {
             const workbook = XLSX.readFile(filePath);
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
 
-            const data = XLSX.utils.sheet_to_json<{ Nome?: string }>(worksheet);
+            const data = XLSX.utils.sheet_to_json<{ ID?: string }>(worksheet);
 
-            const nomeToDelete = data
-                .map(tag => tag.Nome)
-                .filter(tag_name => tag_name !== undefined && tag_name !== null);
+            const idToDelete = data
+                .map(post => post.ID)
+                .filter(id => id !== undefined && id !== null);
 
             const users_crate = await prismaClient.user.findUnique({
                 where: {
@@ -34,13 +34,13 @@ class BulkDeleteTagsService {
 
             const notificationsData = all_user_ids.map(user_id => ({
                 user_id,
-                message: `Tag(s) deletada(s) via planilha pelo usuario ${users_crate?.name}`,
-                type: "tag"
+                message: `Post(s) deletada(s) via planilha pelo usuario ${users_crate?.name}`,
+                type: "post"
             }));
 
-            const deleteTags = await prismaClient.tag.deleteMany({
+            const deletePosts = await prismaClient.post.deleteMany({
                 where: {
-                    tag_name: { in: nomeToDelete },
+                    id: { in: idToDelete },
                 },
             });
 
@@ -48,7 +48,7 @@ class BulkDeleteTagsService {
                 data: notificationsData
             });
 
-            return deleteTags;
+            return deletePosts;
 
         } finally {
             if (fs.existsSync(filePath)) {
@@ -58,4 +58,4 @@ class BulkDeleteTagsService {
     }
 }
 
-export { BulkDeleteTagsService };
+export { BulkDeletePostsService };

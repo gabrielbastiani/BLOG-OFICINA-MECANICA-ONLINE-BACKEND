@@ -117,7 +117,7 @@ model Post {
   slug_title_post String
   text_post       String
   image_post      String?
-  post_like       Int?
+  post_like       Int?       @default(0)
   status          StatusPost @default(Disponivel)
   publish_at      DateTime?
 
@@ -138,7 +138,7 @@ enum StatusPost {
 
 model CategoryOnPost {
   id          String   @id @default(uuid())
-  post        Post     @relation(fields: [post_id], references: [id])
+  post        Post     @relation(fields: [post_id], references: [id], onDelete: Cascade)
   post_id     String
   category    Category @relation(fields: [category_id], references: [id])
   category_id String
@@ -149,7 +149,7 @@ model CategoryOnPost {
 
 model TagOnPost {
   id      String @id @default(uuid())
-  post    Post   @relation(fields: [post_id], references: [id])
+  post    Post   @relation(fields: [post_id], references: [id], onDelete: Cascade)
   post_id String
   tag     Tag    @relation(fields: [tag_id], references: [id])
   tag_id  String
@@ -160,7 +160,7 @@ model TagOnPost {
 
 model Comment {
   id           String        @id @default(uuid())
-  post         Post          @relation(fields: [post_id], references: [id])
+  post         Post          @relation(fields: [post_id], references: [id], onDelete: Cascade)
   post_id      String
   userBlog     UserBlog      @relation(fields: [userBlog_id], references: [id])
   userBlog_id  String

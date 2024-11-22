@@ -18,9 +18,9 @@ class BulkDeleteCategoryController {
 
         try {
             const result = await service.execute(file.path, user_id);
-            return res.status(200).json({ message: "Usuários deletados com sucesso", result });
+            return res.status(200).json({ message: "Categorias deletados com sucesso", result });
         } catch (error) {
-            return res.status(500).json({ error: "Erro ao deletar usuários", details: error.message });
+            return res.status(500).json({ error: "Erro ao deletar categorias", details: error.message });
         }
     }
 }

@@ -2,6 +2,7 @@ import prismaClient from "../../prisma";
 import * as XLSX from "xlsx";
 import fs from "fs";
 import { RoleUser } from "@prisma/client";
+import path from "path";
 
 class BulkDeleteUsersService {
     async execute(filePath: string, user_id: string) {
@@ -15,6 +16,14 @@ class BulkDeleteUsersService {
             const emailsToDelete = data
                 .map(user => user.Email)
                 .filter(email => email !== undefined && email !== null);
+
+            const users = await prismaClient.user.findMany({
+                where: {
+                    email: {
+                        in: emailsToDelete
+                    }
+                }
+            });
 
             const users_crate = await prismaClient.user.findUnique({
                 where: {
@@ -37,6 +46,21 @@ class BulkDeleteUsersService {
                 message: `Usuário(s) deletado(s) via planilha pelo usuario ${users_crate?.name}`,
                 type: "user"
             }));
+
+            users.forEach((user) => {
+                if (user.image_user) {
+                    const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + user.image_user);
+                    console.log(`Deleting image: ${imagePath}`);
+
+                    fs.unlink(imagePath, (err) => {
+                        if (err) {
+                            console.error(`Failed to delete image for user ${user.id}: ${err.message}`);
+                        } else {
+                            console.log(`Image for user ${user.id} deleted successfully`);
+                        }
+                    });
+                }
+            });
 
             const deleteUsers = await prismaClient.user.deleteMany({
                 where: {

@@ -3,8 +3,6 @@ import * as XLSX from 'xlsx';
 
 class ExportDataService {
     async execute(user_id: string, tableName: string, columns: string[], format: 'xlsx' | 'csv', customColumnNames: { [key: string]: string }) {
-        
-        // Configura o filtro base e aplica condições específicas para a tabela "user"
         const filter = tableName === 'user'
             ? {
                 role: { in: ["ADMIN", "EMPLOYEE"] },
@@ -12,17 +10,36 @@ class ExportDataService {
             }
             : {};
 
-        const dataExport = await prismaClient[tableName].findMany({
+        const includeRelations: Record<string, any> = {
+            posts: {
+                tags: { select: { tag: { select: { name: true } } } },
+                categories: { select: { category: { select: { name: true } } } },
+            },
+        };
+
+        const queryOptions: any = {
             where: filter,
             select: columns.reduce((acc, col) => ({ ...acc, [col]: true }), {}),
-        });
+            include: includeRelations[tableName] || undefined,
+        };
+
+        const dataExport = await prismaClient[tableName].findMany(queryOptions);
 
         const formattedData = dataExport.map(item => {
-            return columns.reduce((acc, col) => {
+            const formattedItem = columns.reduce((acc, col) => {
                 acc[customColumnNames[col] || col] = item[col];
                 return acc;
             }, {} as { [key: string]: any });
+
+            if (tableName === 'posts') {
+                formattedItem['categories'] = item.categories?.map((cat: any) => cat.category.name_category).join(', ') || '';
+                formattedItem['tags'] = item.tags?.map((tag: any) => tag.tag.tag_name).join(', ') || '';
+            }
+
+            return formattedItem;
         });
+
+        console.log(formattedData)
 
         const worksheet = XLSX.utils.json_to_sheet(formattedData);
         const workbook = XLSX.utils.book_new();
@@ -31,7 +48,7 @@ class ExportDataService {
         const buffer = format === 'xlsx'
             ? XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' })
             : XLSX.write(workbook, { bookType: 'csv', type: 'buffer' });
-        
+
         await prismaClient.notificationUser.create({
             data: {
                 user_id: user_id,

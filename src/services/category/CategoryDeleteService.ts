@@ -19,7 +19,6 @@ class CategoryDeleteService {
             }
         });
 
-        // Deleção das imagens associadas aos usuários
         categories.forEach((category) => {
             if (category.image_category) {
                 const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + category.image_category);
