@@ -4,7 +4,8 @@ import { Prisma } from "@prisma/client";
 
 class AllPostController {
     async handle(req: Request, res: Response) {
-        const { 
+        const {
+            post_id,
             page = 1, 
             limit = 5, 
             search = "", 
@@ -16,6 +17,7 @@ class AllPostController {
 
         const allPosts = new AllPostService();
         const posts = await allPosts.execute(
+            String(post_id),
             Number(page),
             Number(limit),
             String(search),

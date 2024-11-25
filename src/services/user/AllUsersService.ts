@@ -47,7 +47,19 @@ class AllUsersService {
             where: whereClause,
         });
 
+        // -- ALL USERS --
+
+        const autor = await prismaClient.user.findMany({
+            where: {
+                status: "Disponivel"
+            },
+            select: {
+                name: true
+            }
+        });
+
         return {
+            all_autor: autor,
             users: all_users,
             currentPage: page,
             totalPages: Math.ceil(total_users / limit),

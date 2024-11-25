@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 
 class AllPostService {
   async execute(
+    post_id?: string,
     page: number = 1,
     limit: number = 5,
     search: string = "",
@@ -57,7 +58,16 @@ class AllPostService {
       where: whereClause,
     });
 
+    // --- UNIQUE POST ---//
+
+    const post_unique = await prismaClient.post.findUnique({
+      where: {
+        id: post_id
+      }
+    });
+
     return {
+      unique_post: post_unique,
       posts: all_posts,
       currentPage: page,
       totalPages: Math.ceil(total_posts / limit),

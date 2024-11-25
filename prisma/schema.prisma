@@ -111,8 +111,8 @@ model Tag {
 
 model Post {
   id              String     @id @default(uuid())
-  author          String
   user            User       @relation(fields: [author], references: [name])
+  author          String
   title           String     @db.VarChar(395)
   slug_title_post String
   text_post       String
