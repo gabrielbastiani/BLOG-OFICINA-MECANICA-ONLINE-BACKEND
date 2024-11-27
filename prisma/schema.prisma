@@ -159,14 +159,17 @@ model TagOnPost {
 }
 
 model Comment {
-  id           String        @id @default(uuid())
-  post         Post          @relation(fields: [post_id], references: [id], onDelete: Cascade)
-  post_id      String
-  userBlog     UserBlog      @relation(fields: [userBlog_id], references: [id])
-  userBlog_id  String
-  comment      String        @db.VarChar(5000)
-  nivel        Int?
-  parentId     String?
+  id          String    @id @default(uuid())
+  post        Post      @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id     String
+  userBlog    UserBlog  @relation(fields: [userBlog_id], references: [id])
+  userBlog_id String
+  comment     String    @db.VarChar(5000)
+  nivel       Int?
+  parentId    String?
+  parent      Comment?  @relation("ReplyToComment", fields: [parentId], references: [id])
+  replies     Comment[] @relation("ReplyToComment")
+
   comment_like Int?
   status       StatusComment @default(Fila)
 

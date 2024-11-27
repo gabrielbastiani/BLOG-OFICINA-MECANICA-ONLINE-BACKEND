@@ -49,7 +49,6 @@ class BulkCategoryImportService {
             });
         });
 
-        // Criação de categorias no banco de dados
         const createdCategories = [];
 
         for (const category of categories) {

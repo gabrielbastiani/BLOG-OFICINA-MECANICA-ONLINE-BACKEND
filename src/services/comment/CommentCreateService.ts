@@ -10,60 +10,57 @@ interface CommentRequest {
 }
 
 class CommentCreateService {
-    async execute({ post_id, userBlog_id, comment, parentId, nivel }: CommentRequest) {
+    async execute({ post_id, userBlog_id, comment, parentId }: CommentRequest) {
+        if (!post_id || !userBlog_id || !comment) {
+            throw new Error("Campos obrigatórios ausentes: post_id, userBlog_id ou comment.");
+        }
+
+        let computedNivel = 0;
+        if (parentId) {
+            const parentComment = await prismaClient.comment.findUnique({
+                where: { id: parentId },
+            });
+
+            if (!parentComment) {
+                throw new Error("Comentário pai não encontrado.");
+            }
+
+            computedNivel = (parentComment.nivel || 0) + 1;
+        }
 
         const comment_create = await prismaClient.comment.create({
             data: {
-                post_id: post_id,
-                userBlog_id: userBlog_id,
-                comment: comment,
-                parentId: parentId,
-                nivel: Number(nivel)
-            }
+                post_id,
+                userBlog_id,
+                comment,
+                parentId,
+                nivel: computedNivel,
+            },
         });
 
-        const users_superAdmins = await prismaClient.user.findMany({
-            where: {
-                role: RoleUser.SUPER_ADMIN
-            }
-        });
-
-        const users_admins = await prismaClient.user.findMany({
-            where: {
-                role: RoleUser.ADMIN
-            }
-        });
+        const [users_superAdmins, users_admins, blog_user, blog_post] = await Promise.all([
+            prismaClient.user.findMany({ where: { role: RoleUser.SUPER_ADMIN } }),
+            prismaClient.user.findMany({ where: { role: RoleUser.ADMIN } }),
+            prismaClient.userBlog.findUnique({ where: { id: userBlog_id } }),
+            prismaClient.post.findUnique({ where: { id: post_id } }),
+        ]);
 
         const all_user_ids = [
             ...users_superAdmins.map(user => user.id),
-            ...users_admins.map(user => user.id)
+            ...users_admins.map(user => user.id),
         ];
 
-        const blog_user = await prismaClient.userBlog.findUnique({
-            where: {
-                id: userBlog_id
-            }
-        });
-
-        const blog_post = await prismaClient.post.findUnique({
-            where: {
-                id: post_id
-            }
-        });
+        const message = `${blog_user?.name || "Um usuário"} deixou seu comentário no post ${blog_post?.title || "desconhecido"}.`;
 
         const notificationsData = all_user_ids.map(user_id => ({
-            userBlog_id,
             user_id,
-            message: `${blog_user.name} deixou seu comentario no post ${blog_post.title}.`,
-            type: "comment"
+            message,
+            type: "comment",
         }));
 
-        await prismaClient.notificationUser.createMany({
-            data: notificationsData
-        });
+        await prismaClient.notificationUser.createMany({ data: notificationsData });
 
         return comment_create;
-
     }
 }
 

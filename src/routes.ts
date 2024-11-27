@@ -87,7 +87,9 @@ import { AllTagController } from "./controllers/tag/AllTagController";
 import { TagDeleteController } from "./controllers/tag/TagDeleteController";
 import { UpdateTagController } from "./controllers/tag/UpdateTagController";
 
-
+// -- ROUTES BLOG --
+import { UserBlogCreateController } from "./controllers/user/user_blog/UserBlogCreateController";
+import { UserBlogAuthController } from "./controllers/user/user_blog/UserBlogAuthController";
 
 
 const router = Router();
@@ -143,7 +145,7 @@ router.delete('/post_category/delete', isAuthenticated, new PostCategoryDeleteCo
 router.get('/post_category/get_post_category', isAuthenticated, new PostCategoryFindController().handle);
 
 // -- ROUTES COMMENT --
-router.post('/comment/create_comment', new CommentCreateController().handle);
+router.post('/comment/create_comment', isAuthenticated, new CommentCreateController().handle);
 router.put('/comment/update_status', isAuthenticated, new CommentStatusController().handle);
 router.put('/comment/delete', isAuthenticated, new CommentDeleteController().handle);
 router.get('/comment/cms/get_comments', isAuthenticated, new CommentFindController().handle);
@@ -178,6 +180,10 @@ router.get('/tag/download_excel_delete_tags', isAuthenticated, new GenerateExcel
 router.get('/tag/all_tags', isAuthenticated, new AllTagController().handle);
 router.delete('/tag/delete_tag', isAuthenticated, new TagDeleteController().handle);
 router.put('/tag/update', isAuthenticated, new UpdateTagController().handle);
+
+// -- ROUTES BLOG --
+router.post('/user/user_blog/create', upload_image.single('file'), new UserBlogCreateController().handle);
+router.post('/user/user_blog/session', new UserBlogAuthController().handle);
 
 
 export { router }

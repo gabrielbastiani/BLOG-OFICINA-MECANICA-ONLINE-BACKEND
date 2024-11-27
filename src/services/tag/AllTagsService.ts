@@ -43,7 +43,12 @@ class AllTagsService {
             where: whereClause,
         });
 
+        // -- TODAS TAGS -- //
+
+        const tags_all = await prismaClient.tag.findMany();
+
         return {
+            tags_all: tags_all,
             tags: all_tags,
             currentPage: page,
             totalPages: Math.ceil(total_tags / limit),

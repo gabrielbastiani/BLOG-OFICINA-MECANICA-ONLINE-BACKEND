@@ -18,7 +18,7 @@ class GenerateExcelCategoryService {
         ];
 
         const users = [
-            { name_category: "Motores", description: "Veja aqui tudo relacionado a motores", status: "Disponivel", parentId: "Insira aqui o ID da categoria que deseja relacionar" }
+            { name_category: "Motores", description: "Veja aqui tudo relacionado a motores", status: "Disponivel", parentId: "Insira aqui, o nome da categoria que deseja vincular" }
         ];
 
         users.forEach((category) => {
