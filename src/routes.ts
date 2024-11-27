@@ -53,6 +53,7 @@ import { CommentCreateController } from "./controllers/comment/CommentCreateCont
 import { CommentStatusController } from "./controllers/comment/CommentStatusController";
 import { CommentDeleteController } from "./controllers/comment/CommentDeleteController";
 import { CommentFindController } from "./controllers/comment/CommentFindController";
+import { CommentLikeController } from "./controllers/comment/CommentLikeController";
 
 // -- ROUTES FORM CONTACT --
 import { FormContactCreateController } from "./controllers/form_contact/FormContactCreateController";
@@ -90,6 +91,7 @@ import { UpdateTagController } from "./controllers/tag/UpdateTagController";
 // -- ROUTES BLOG --
 import { UserBlogCreateController } from "./controllers/user/user_blog/UserBlogCreateController";
 import { UserBlogAuthController } from "./controllers/user/user_blog/UserBlogAuthController";
+
 
 
 const router = Router();
@@ -147,6 +149,7 @@ router.get('/post_category/get_post_category', isAuthenticated, new PostCategory
 // -- ROUTES COMMENT --
 router.post('/comment/create_comment', isAuthenticated, new CommentCreateController().handle);
 router.put('/comment/update_status', isAuthenticated, new CommentStatusController().handle);
+router.put('/comment/likes', isAuthenticated, new CommentLikeController().handle);
 router.put('/comment/delete', isAuthenticated, new CommentDeleteController().handle);
 router.get('/comment/cms/get_comments', isAuthenticated, new CommentFindController().handle);
 

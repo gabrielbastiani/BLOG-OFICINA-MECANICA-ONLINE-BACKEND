@@ -8,6 +8,7 @@ class UserBlogCreateController {
             email,
             password,
             image_user,
+            newsletter
         } = req.body;
 
         const createUser = new UserBlogCreateService();
@@ -21,7 +22,8 @@ class UserBlogCreateController {
             name,
             email,
             password,
-            image_user: imageToUpdate
+            image_user: imageToUpdate,
+            newsletter
         });
 
         return res.json(users)

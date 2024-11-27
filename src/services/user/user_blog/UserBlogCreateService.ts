@@ -11,10 +11,18 @@ interface UserRequest {
     email: string;
     image_user?: string;
     password: string;
+    newsletter?: string;
 }
 
 class UserBlogCreateService {
-    async execute({ name, email, password, image_user }: UserRequest) {
+    async execute({ name, email, password, image_user, newsletter }: UserRequest) {
+
+        const newsletterBool =
+            newsletter === "true" ? true : newsletter === "false" ? false : undefined;
+
+        if (newsletterBool === undefined) {
+            throw new Error("Invalid value for 'newsletter'. Use 'true' or 'false'.");
+        }
 
         function removerAcentos(s: any) {
             return s.normalize('NFD')
@@ -47,9 +55,19 @@ class UserBlogCreateService {
                 slug_name: removerAcentos(name),
                 email: email,
                 image_user: image_user,
-                password: passwordHash
+                password: passwordHash,
+                newsletter: newsletterBool
             }
         });
+
+        if (newsletterBool === true) {
+            await prismaClient.newsletter.create({
+                data: {
+                    name_user: name,
+                    email_user: email
+                }
+            });
+        }
 
         const users_superAdmins = await prismaClient.user.findMany({
             where: {
