@@ -52,7 +52,7 @@ import { GenerateExcelDeleteCategoryController } from "./controllers/category/Ge
 import { CommentCreateController } from "./controllers/comment/CommentCreateController";
 import { CommentStatusController } from "./controllers/comment/CommentStatusController";
 import { CommentDeleteController } from "./controllers/comment/CommentDeleteController";
-import { CommentFindController } from "./controllers/comment/CommentFindController";
+import { AllCommentController } from "./controllers/comment/AllCommentController";
 import { CommentLikeController } from "./controllers/comment/CommentLikeController";
 
 // -- ROUTES FORM CONTACT --
@@ -151,7 +151,7 @@ router.post('/comment/create_comment', isAuthenticated, new CommentCreateControl
 router.put('/comment/update_status', isAuthenticated, new CommentStatusController().handle);
 router.put('/comment/likes', isAuthenticated, new CommentLikeController().handle);
 router.put('/comment/delete', isAuthenticated, new CommentDeleteController().handle);
-router.get('/comment/cms/get_comments', isAuthenticated, new CommentFindController().handle);
+router.get('/comment/cms/get_comments', isAuthenticated, new AllCommentController().handle);
 
 // -- ROUTES FORM CONTACT --
 router.post('/form_contact/create_form_contact', new FormContactCreateController().handle);
