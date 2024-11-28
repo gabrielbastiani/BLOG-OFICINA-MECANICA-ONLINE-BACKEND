@@ -168,8 +168,8 @@ model Comment {
   userBlog_id String
   comment     String    @db.VarChar(5000)
   nivel       Int?
-  parentId    String?
   parent      Comment?  @relation("ReplyToComment", fields: [parentId], references: [id])
+  parentId    String?
   replies     Comment[] @relation("ReplyToComment")
 
   comment_like Int           @default(0)

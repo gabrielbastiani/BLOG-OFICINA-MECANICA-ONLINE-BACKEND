@@ -16,24 +16,29 @@ class AllCommentService {
 
         // Construção da cláusula 'where' com filtro de texto e data
         const whereClause: Prisma.CommentWhereInput = {
-            ...(
-                search ? {
-                    OR: [
-                        { include: { post: title: { contains: search, mode: Prisma.QueryMode.insensitive } } },
-                        { include: { userBlog: name: { contains: search, mode: Prisma.QueryMode.insensitive } } },
-                    ]
-                } : {}
-            ),
-            ...(
-                startDate && endDate ? {
-                    created_at: {
-                        gte: moment(startDate).startOf('day').toISOString(),
-                        lte: moment(endDate).endOf('day').toISOString(),
+            AND: [
+                // Filtro de texto
+                search
+                    ? {
+                        OR: [
+                            { post: { title: { contains: search, mode: Prisma.QueryMode.insensitive } } },
+                            { userBlog: { name: { contains: search, mode: Prisma.QueryMode.insensitive } } },
+                        ],
                     }
-                } : {}
-            )
-        };        
+                    : {},
+                // Filtro de datas
+                startDate && endDate
+                    ? {
+                        created_at: {
+                            gte: moment(startDate).startOf("day").toISOString(),
+                            lte: moment(endDate).endOf("day").toISOString(),
+                        },
+                    }
+                    : {},
+            ],
+        };
 
+        // Buscar os comentários com paginação e ordenação
         const all_comments = await prismaClient.comment.findMany({
             where: whereClause,
             skip,
@@ -42,16 +47,37 @@ class AllCommentService {
             include: {
                 commentLikes: true,
                 post: true,
-                userBlog: true
-            }
+                userBlog: true,
+                replies: true,
+                parent: true,
+            },
         });
+
+        // Calcular o total de respostas (diretas e indiretas)
+        const enrichedComments = await Promise.all(
+            all_comments.map(async (comment) => {
+                // Buscar respostas diretas e indiretas
+                const directReplies = await prismaClient.comment.count({
+                    where: { parentId: comment.id },
+                });
+
+                const indirectReplies = await prismaClient.comment.count({
+                    where: { parent: { parentId: comment.id } },
+                });
+
+                return {
+                    ...comment,
+                    replyCount: directReplies + indirectReplies,
+                };
+            })
+        );
 
         const total_comments = await prismaClient.comment.count({
             where: whereClause,
         });
 
         return {
-            comments: all_comments,
+            comments: enrichedComments,
             currentPage: page,
             totalPages: Math.ceil(total_comments / limit),
             totalContacts: total_comments,

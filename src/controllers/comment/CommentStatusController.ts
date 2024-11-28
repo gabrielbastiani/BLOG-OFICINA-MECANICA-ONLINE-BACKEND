@@ -4,9 +4,7 @@ import { CommentStatusService } from '../../services/comment/CommentStatusServic
 class CommentStatusController {
     async handle(req: Request, res: Response) {
 
-        const comment_id = req.query.comment_id as string;
-
-        const { status } = req.body;
+        const { comment_id, status } = req.body;
 
         const comment_status = new CommentStatusService();
 

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { FormContactFindService } from "../../services/form_contact/FormContactFindService";
+import { AllCommentService } from "../../services/comment/AllCommentService"; 
 import { Prisma } from "@prisma/client";
 
 class AllCommentController {
@@ -14,8 +14,8 @@ class AllCommentController {
             endDate
         } = req.query;
 
-        const allContacts = new FormContactFindService();
-        const contacts = await allContacts.execute(
+        const allComment = new AllCommentService();
+        const commentes = await allComment.execute(
             Number(page),
             Number(limit),
             String(search),
@@ -25,7 +25,7 @@ class AllCommentController {
             endDate ? String(endDate) : undefined
         );
 
-        return res.json(contacts);
+        return res.json(commentes);
     }
 }
 
