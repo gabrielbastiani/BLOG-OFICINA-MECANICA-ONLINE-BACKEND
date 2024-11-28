@@ -21,6 +21,7 @@ class AllCommentService {
                 search
                     ? {
                         OR: [
+                            { status: { contains: search, mode: Prisma.QueryMode.insensitive } },
                             { post: { title: { contains: search, mode: Prisma.QueryMode.insensitive } } },
                             { userBlog: { name: { contains: search, mode: Prisma.QueryMode.insensitive } } },
                         ],

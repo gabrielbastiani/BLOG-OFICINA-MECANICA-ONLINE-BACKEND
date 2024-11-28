@@ -1,4 +1,3 @@
-import { StatusComment } from '@prisma/client';
 import prismaClient from '../../prisma';
 
 interface CommentRequest {
@@ -13,7 +12,7 @@ class CommentStatusService {
                 id: comment_id
             },
             data: {
-                status: status as StatusComment
+                status: status
             }
         });
 
