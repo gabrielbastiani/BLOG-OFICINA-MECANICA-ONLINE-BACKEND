@@ -44,7 +44,7 @@ enum StatusUser {
 }
 
 model UserBlog {
-  id         String         @id @default(uuid())
+  id         String         @id @default(uuid()) @db.Uuid
   name       String         @unique @db.VarChar(295)
   slug_name  String         @db.VarChar(295)
   image_user String?
@@ -161,19 +161,19 @@ model TagOnPost {
 }
 
 model Comment {
-  id          String    @id @default(uuid())
+  id          String    @id @default(uuid()) @db.Uuid
   post        Post      @relation(fields: [post_id], references: [id], onDelete: Cascade)
   post_id     String
   userBlog    UserBlog  @relation(fields: [userBlog_id], references: [id])
-  userBlog_id String
+  userBlog_id String    @db.Uuid
   comment     String    @db.VarChar(5000)
+  status      String    @default("Fila")
   nivel       Int?
   parent      Comment?  @relation("ReplyToComment", fields: [parentId], references: [id])
-  parentId    String?
+  parentId    String?   @db.Uuid
   replies     Comment[] @relation("ReplyToComment")
 
-  comment_like Int           @default(0)
-  status       StatusComment @default(Fila)
+  comment_like Int @default(0)
 
   commentLikes CommentLike[]
 
@@ -183,27 +183,18 @@ model Comment {
   @@map("comments")
 }
 
-enum StatusComment {
-  Fila
-  Aprovar
-  Rejeitar
-  Spam
-  Lixeira
-}
-
 model CommentLike {
-  id          String   @id @default(uuid())
-  comment_id  String   @db.Uuid
-  userBlog_id String   @db.Uuid
+  id          String  @id @default(uuid()) @db.Uuid
+  comment_id  String  @db.Uuid
+  userBlog_id String  @db.Uuid
   isLike      Boolean
 
-  comment     Comment  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
-  userBlog    UserBlog @relation(fields: [userBlog_id], references: [id])
+  comment  Comment  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  userBlog UserBlog @relation(fields: [userBlog_id], references: [id])
 
-  created_at  DateTime @default(now())
+  created_at DateTime @default(now())
 
   @@unique([comment_id, userBlog_id])
-
   @@map("commentlikes")
 }
 
@@ -249,7 +240,7 @@ model NotificationUser {
 model NotificationUserBlog {
   id          String    @id @default(uuid())
   userBlog    UserBlog? @relation(fields: [userBlog_id], references: [id])
-  userBlog_id String?
+  userBlog_id String?   @db.Uuid
   type        String
   message     String    @db.VarChar(500)
   read        Boolean   @default(false)

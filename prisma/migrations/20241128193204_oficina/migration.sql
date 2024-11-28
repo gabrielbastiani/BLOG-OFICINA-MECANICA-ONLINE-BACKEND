@@ -13,9 +13,6 @@ CREATE TYPE "StatusCategory" AS ENUM ('Disponivel', 'Indisponivel');
 -- CreateEnum
 CREATE TYPE "StatusPost" AS ENUM ('Disponivel', 'Indisponivel');
 
--- CreateEnum
-CREATE TYPE "StatusComment" AS ENUM ('Fila', 'Aprovar', 'Rejeitar', 'Spam', 'Lixeira');
-
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
@@ -34,13 +31,14 @@ CREATE TABLE "users" (
 
 -- CreateTable
 CREATE TABLE "userblogs" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "name" VARCHAR(295) NOT NULL,
     "slug_name" VARCHAR(295) NOT NULL,
     "image_user" TEXT,
     "email" VARCHAR(180) NOT NULL,
     "password" TEXT NOT NULL,
     "status" "StatusUserBlog" NOT NULL DEFAULT 'Disponivel',
+    "newsletter" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -119,18 +117,29 @@ CREATE TABLE "tag_on_posts" (
 
 -- CreateTable
 CREATE TABLE "comments" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "post_id" TEXT NOT NULL,
-    "userBlog_id" TEXT NOT NULL,
+    "userBlog_id" UUID NOT NULL,
     "comment" VARCHAR(5000) NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'Fila',
     "nivel" INTEGER,
-    "parentId" TEXT,
-    "comment_like" INTEGER,
-    "status" "StatusComment" NOT NULL DEFAULT 'Fila',
+    "parentId" UUID,
+    "comment_like" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "comments_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "commentlikes" (
+    "id" UUID NOT NULL,
+    "comment_id" UUID NOT NULL,
+    "userBlog_id" UUID NOT NULL,
+    "isLike" BOOLEAN NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "commentlikes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -174,7 +183,7 @@ CREATE TABLE "notificationusers" (
 -- CreateTable
 CREATE TABLE "notificationuserblogs" (
     "id" TEXT NOT NULL,
-    "userBlog_id" TEXT,
+    "userBlog_id" UUID,
     "type" TEXT NOT NULL,
     "message" VARCHAR(500) NOT NULL,
     "read" BOOLEAN NOT NULL DEFAULT false,
@@ -208,6 +217,9 @@ CREATE UNIQUE INDEX "category_on_posts_post_id_category_id_key" ON "category_on_
 -- CreateIndex
 CREATE UNIQUE INDEX "tag_on_posts_post_id_tag_id_key" ON "tag_on_posts"("post_id", "tag_id");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "commentlikes_comment_id_userBlog_id_key" ON "commentlikes"("comment_id", "userBlog_id");
+
 -- AddForeignKey
 ALTER TABLE "categories" ADD CONSTRAINT "categories_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "categories"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -231,6 +243,15 @@ ALTER TABLE "comments" ADD CONSTRAINT "comments_post_id_fkey" FOREIGN KEY ("post
 
 -- AddForeignKey
 ALTER TABLE "comments" ADD CONSTRAINT "comments_userBlog_id_fkey" FOREIGN KEY ("userBlog_id") REFERENCES "userblogs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "comments" ADD CONSTRAINT "comments_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "comments"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "commentlikes" ADD CONSTRAINT "commentlikes_comment_id_fkey" FOREIGN KEY ("comment_id") REFERENCES "comments"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "commentlikes" ADD CONSTRAINT "commentlikes_userBlog_id_fkey" FOREIGN KEY ("userBlog_id") REFERENCES "userblogs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "notificationusers" ADD CONSTRAINT "notificationusers_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
