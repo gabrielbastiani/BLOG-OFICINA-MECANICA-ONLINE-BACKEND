@@ -167,7 +167,7 @@ model Comment {
   userBlog    UserBlog  @relation(fields: [userBlog_id], references: [id])
   userBlog_id String    @db.Uuid
   comment     String    @db.VarChar(5000)
-  status      String    @default("Fila")
+  status      String    @default("Pendente")
   nivel       Int?
   parent      Comment?  @relation("ReplyToComment", fields: [parentId], references: [id])
   parentId    String?   @db.Uuid

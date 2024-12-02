@@ -16,6 +16,14 @@ class ExportDataService {
                 select: columns.reduce((acc, col) => ({ ...acc, [col]: true }), {}),
             };
 
+            if (tableName === 'comment') {
+                queryOptions.include = {
+                    post: { select: { title: true } },
+                    userBlog: { select: { name: true } },
+                    replies: true, // Para contar as respostas
+                };
+            }
+
             const dataExport = await prismaClient[tableName].findMany(queryOptions);
 
             if (!dataExport || dataExport.length === 0) {
@@ -27,6 +35,20 @@ class ExportDataService {
                     acc[customColumnNames[col] || col] = item[col];
                     return acc;
                 }, {} as { [key: string]: any });
+
+                if (tableName === 'comment') {
+                    columns.forEach((col) => {
+                        if (col === 'post' && item.post) {
+                            formattedItem[col] = item.post.title; // Usar título do post
+                        } else if (col === 'userBlog' && item.userBlog) {
+                            formattedItem[col] = item.userBlog.name; // Usar nome do autor
+                        } else if (col === 'replies') {
+                            formattedItem[col] = item.replies.length; // Contar respostas
+                        } else {
+                            formattedItem[col] = item[col];
+                        }
+                    });
+                }
 
                 if (tableName === 'post' && item.categories && item.tags) {
                     const categoryIds = item.categories.map((cat: any) => cat.category_id);
