@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import { GenerateExcelDeleteUserService } from '../../services/user/GenerateExcelDeleteUserService';
+import { GenerateExcelDeleteUserBlogService } from '../../../services/user/user_blog/GenerateExcelDeleteUserBlogService'; 
 
-class GenerateExcelDeleteUserController {
+class GenerateExcelDeleteUserBlogController {
     async handle(req: Request, res: Response) {
 
         const user_id = req.query.user_id as string;
         
         try {
-            const generateExcelService = new GenerateExcelDeleteUserService();
+            const generateExcelService = new GenerateExcelDeleteUserBlogService();
             const workbook = await generateExcelService.execute({ user_id });
 
             res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -23,4 +23,4 @@ class GenerateExcelDeleteUserController {
     }
 }
 
-export { GenerateExcelDeleteUserController };
+export { GenerateExcelDeleteUserBlogController };

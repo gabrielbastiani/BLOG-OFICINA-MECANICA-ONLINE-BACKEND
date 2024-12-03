@@ -1,5 +1,5 @@
-import { RoleUser, StatusUser } from '@prisma/client';
-import prismaClient from '../../prisma';
+import { StatusUser } from '@prisma/client';
+import prismaClient from '../../../prisma';
 import fs from 'fs';
 import path from 'path';
 import { hash } from 'bcryptjs';
@@ -9,13 +9,12 @@ interface UserRequest {
     name?: string;
     email?: string;
     image_user?: string;
-    role?: string;
     status?: string;
     password?: string;
 }
 
-class UserUpdateDataService {
-    async execute({ user_id, name, email, image_user, role, status, password }: UserRequest) {
+class UserBlogUpdateDataService {
+    async execute({ user_id, name, email, image_user, status, password }: UserRequest) {
 
         function removerAcentos(s: any) {
             return s.normalize('NFD')
@@ -26,11 +25,11 @@ class UserUpdateDataService {
                 .replace(/[/]/g, "-");
         }
 
-        const user = await prismaClient.user.findUnique({
+        const userBlog = await prismaClient.userBlog.findUnique({
             where: { id: user_id }
         });
 
-        if (!user) {
+        if (!userBlog) {
             throw new Error("User not found");
         }
 
@@ -42,7 +41,7 @@ class UserUpdateDataService {
         }
 
         if (email) {
-            const userAlreadyExists = await prismaClient.user.findFirst({
+            const userAlreadyExists = await prismaClient.userBlog.findFirst({
                 where: {
                     email: email,
                     id: { not: user_id }
@@ -57,8 +56,8 @@ class UserUpdateDataService {
         }
 
         if (image_user) {
-            if (user.image_user) {
-                const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + user.image_user);
+            if (userBlog.image_user) {
+                const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + userBlog.image_user);
                 console.log(`Deleting image: ${imagePath}`);
                 fs.unlink(imagePath, (err) => {
                     if (err) {
@@ -71,10 +70,6 @@ class UserUpdateDataService {
             dataToUpdate.image_user = image_user;
         }
 
-        if (role) {
-            dataToUpdate.role = role as RoleUser;
-        }
-
         if (status) {
             dataToUpdate.status = status as StatusUser;
         }
@@ -84,7 +79,7 @@ class UserUpdateDataService {
             dataToUpdate.password = hashedPassword;
         }
 
-        const update_user = await prismaClient.user.update({
+        const update_user = await prismaClient.userBlog.update({
             where: {
                 id: user_id
             },
@@ -95,4 +90,4 @@ class UserUpdateDataService {
     }
 }
 
-export { UserUpdateDataService };
+export { UserBlogUpdateDataService };

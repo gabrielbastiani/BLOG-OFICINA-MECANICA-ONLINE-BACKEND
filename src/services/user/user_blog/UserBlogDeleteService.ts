@@ -1,4 +1,4 @@
-import prismaClient from "../../prisma";
+import prismaClient from "../../../prisma";
 import fs from 'fs';
 import path from 'path';
 
@@ -8,10 +8,10 @@ interface UserRequest {
     user_id?: string;
 }
 
-class UserDeleteService {
+class UserBlogDeleteService {
     async execute({ id_delete, name, user_id }: UserRequest) {
 
-        const users = await prismaClient.user.findMany({
+        const users = await prismaClient.userBlog.findMany({
             where: {
                 id: {
                     in: id_delete
@@ -19,22 +19,24 @@ class UserDeleteService {
             }
         });
 
-        users.forEach((user) => {
-            if (user.image_user) {
-                const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + user.image_user);
+        users.forEach((userBlog) => {
+            if (userBlog.image_user) {
+                const imagePath = path.resolve(__dirname + '/' + '..' + '/' + '..' + '/' + '..' + '/' + '..' + '/' + 'images' + '/' + userBlog.image_user);
                 console.log(`Deleting image: ${imagePath}`);
 
                 fs.unlink(imagePath, (err) => {
                     if (err) {
-                        console.error(`Failed to delete image for user ${user.id}: ${err.message}`);
+                        console.error(`Failed to delete image for userBlog ${userBlog.id}: ${err.message}`);
                     } else {
-                        console.log(`Image for user ${user.id} deleted successfully`);
+                        console.log(`Image for userBlog ${userBlog.id} deleted successfully`);
                     }
                 });
             }
         });
 
-        const deletedUsers = await prismaClient.user.deleteMany({
+        console.log(id_delete)
+
+        const deletedUsers = await prismaClient.userBlog.deleteMany({
             where: {
                 id: {
                     in: id_delete
@@ -45,7 +47,7 @@ class UserDeleteService {
         await prismaClient.notificationUser.createMany({
             data: users.map((user) => ({
                 user_id: user_id,
-                message: `Usuário ${user.name} foi deletado pelo usuário ${name}.`,
+                message: `Usuário do blog ${user.name} foi deletado pelo usuário ${name}.`,
                 type: "user"
             }))
         });
@@ -54,4 +56,4 @@ class UserDeleteService {
     }
 }
 
-export { UserDeleteService };
+export { UserBlogDeleteService };
