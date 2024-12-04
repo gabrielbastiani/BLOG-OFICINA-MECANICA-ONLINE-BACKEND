@@ -34,8 +34,6 @@ class UserBlogDeleteService {
             }
         });
 
-        console.log(id_delete)
-
         const deletedUsers = await prismaClient.userBlog.deleteMany({
             where: {
                 id: {
