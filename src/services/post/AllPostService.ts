@@ -60,23 +60,27 @@ class AllPostService {
 
     // --- UNIQUE POST ---//
 
-    const post_unique = await prismaClient.post.findUnique({
-      where: {
-        id: post_id
-      },
-      include: {
-        categories: {
-          include: {
-            category: true
-          }
+    let post_unique = null;
+
+    if (post_id) {
+      post_unique = await prismaClient.post.findUnique({
+        where: {
+          id: post_id,
         },
-        tags: {
-          include: {
-            tag: true
-          }
-        }
-      }
-    });
+        include: {
+          categories: {
+            include: {
+              category: true,
+            },
+          },
+          tags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+      });
+    }
 
     return {
       unique_post: post_unique,

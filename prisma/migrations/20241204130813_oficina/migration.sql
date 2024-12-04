@@ -23,6 +23,7 @@ CREATE TABLE "users" (
     "password" TEXT NOT NULL,
     "status" "StatusUser" NOT NULL DEFAULT 'Disponivel',
     "role" "RoleUser" NOT NULL DEFAULT 'SUPER_ADMIN',
+    "last_access" TIMESTAMPTZ(3),
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -39,6 +40,7 @@ CREATE TABLE "userblogs" (
     "password" TEXT NOT NULL,
     "status" "StatusUserBlog" NOT NULL DEFAULT 'Disponivel',
     "newsletter" BOOLEAN NOT NULL DEFAULT false,
+    "last_access" TIMESTAMPTZ(3),
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -82,7 +84,7 @@ CREATE TABLE "tags" (
 
 -- CreateTable
 CREATE TABLE "posts" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "author" TEXT NOT NULL,
     "title" VARCHAR(395) NOT NULL,
     "slug_title_post" TEXT NOT NULL,
@@ -98,9 +100,20 @@ CREATE TABLE "posts" (
 );
 
 -- CreateTable
+CREATE TABLE "postlikes" (
+    "id" UUID NOT NULL,
+    "post_id" UUID NOT NULL,
+    "userBlog_id" UUID NOT NULL,
+    "isLike" BOOLEAN NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "postlikes_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "category_on_posts" (
-    "id" TEXT NOT NULL,
-    "post_id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
+    "post_id" UUID NOT NULL,
     "category_id" TEXT NOT NULL,
 
     CONSTRAINT "category_on_posts_pkey" PRIMARY KEY ("id")
@@ -108,8 +121,8 @@ CREATE TABLE "category_on_posts" (
 
 -- CreateTable
 CREATE TABLE "tag_on_posts" (
-    "id" TEXT NOT NULL,
-    "post_id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
+    "post_id" UUID NOT NULL,
     "tag_id" TEXT NOT NULL,
 
     CONSTRAINT "tag_on_posts_pkey" PRIMARY KEY ("id")
@@ -118,10 +131,10 @@ CREATE TABLE "tag_on_posts" (
 -- CreateTable
 CREATE TABLE "comments" (
     "id" UUID NOT NULL,
-    "post_id" TEXT NOT NULL,
+    "post_id" UUID NOT NULL,
     "userBlog_id" UUID NOT NULL,
     "comment" VARCHAR(5000) NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'Fila',
+    "status" TEXT NOT NULL DEFAULT 'Pendente',
     "nivel" INTEGER,
     "parentId" UUID,
     "comment_like" INTEGER NOT NULL DEFAULT 0,
@@ -212,6 +225,9 @@ CREATE UNIQUE INDEX "categories_name_category_key" ON "categories"("name_categor
 CREATE UNIQUE INDEX "tags_tag_name_key" ON "tags"("tag_name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "postlikes_post_id_userBlog_id_key" ON "postlikes"("post_id", "userBlog_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "category_on_posts_post_id_category_id_key" ON "category_on_posts"("post_id", "category_id");
 
 -- CreateIndex
@@ -225,6 +241,12 @@ ALTER TABLE "categories" ADD CONSTRAINT "categories_parentId_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "posts" ADD CONSTRAINT "posts_author_fkey" FOREIGN KEY ("author") REFERENCES "users"("name") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "postlikes" ADD CONSTRAINT "postlikes_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "postlikes" ADD CONSTRAINT "postlikes_userBlog_id_fkey" FOREIGN KEY ("userBlog_id") REFERENCES "userblogs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "category_on_posts" ADD CONSTRAINT "category_on_posts_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -242,7 +264,7 @@ ALTER TABLE "tag_on_posts" ADD CONSTRAINT "tag_on_posts_tag_id_fkey" FOREIGN KEY
 ALTER TABLE "comments" ADD CONSTRAINT "comments_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "comments" ADD CONSTRAINT "comments_userBlog_id_fkey" FOREIGN KEY ("userBlog_id") REFERENCES "userblogs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "comments" ADD CONSTRAINT "comments_userBlog_id_fkey" FOREIGN KEY ("userBlog_id") REFERENCES "userblogs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "comments" ADD CONSTRAINT "comments_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "comments"("id") ON DELETE SET NULL ON UPDATE CASCADE;

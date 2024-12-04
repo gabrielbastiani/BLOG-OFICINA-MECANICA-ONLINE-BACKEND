@@ -10,7 +10,7 @@ class CommentLikeController {
         const result = await commentLikeService.execute({
             comment_id,
             userBlog_id,
-            isLike: isLike === "true", // Converter para boolean
+            isLike: isLike === true || isLike === "true",
         });
 
         return res.json(result);

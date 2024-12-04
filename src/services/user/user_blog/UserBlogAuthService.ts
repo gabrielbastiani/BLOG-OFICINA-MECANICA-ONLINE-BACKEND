@@ -1,4 +1,4 @@
-import prismaClient from '../../../prisma'; 
+import prismaClient from '../../../prisma';
 import { compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
 
@@ -24,6 +24,15 @@ class UserBlogAuthService {
         if (!passwordMatch) {
             throw new Error("User/password incorrect")
         }
+
+        await prismaClient.userBlog.update({
+            where: {
+                id: user.id
+            },
+            data: {
+                last_access: new Date()
+            }
+        });
 
         const token = sign(
             {

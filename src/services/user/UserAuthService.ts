@@ -25,6 +25,15 @@ class UserAuthService {
             throw new Error("User/password incorrect")
         }
 
+        await prismaClient.user.update({
+            where: {
+                id: user.id
+            },
+            data: {
+                last_access: new Date()
+            }
+        });
+
         const token = sign(
             {
                 name: user.name,

@@ -35,6 +35,7 @@ import { GenerateExcelDeletePostsController } from "./controllers/post/GenerateE
 import { BulkDeletePostsController } from "./controllers/post/BulkDeletePostsController";
 import { GenerateExcelPostsController } from "./controllers/post/GenerateExcelPostsController";
 import { BulkPostsImportController } from "./controllers/post/BulkPostsImportController";
+import { PostLikeController } from "./controllers/post/PostLikeController";
 
 // -- ROUTES POST CATEGORY --
 import { PostCategoryCreateController } from "./controllers/post_category/PostCategoryCreateController";
@@ -144,6 +145,7 @@ router.get('/post/download_excel_delete_post', isAuthenticated, new GenerateExce
 router.post('/post/bulk_delete_posts', isAuthenticated, temp_file.single('file'), new BulkDeletePostsController().handle);
 router.get('/post/donwload_excel_posts', isAuthenticated, new GenerateExcelPostsController().handle);
 router.post('/post/bulk_posts', isAuthenticated, temp_file.single("file"), new BulkPostsImportController().handle);
+router.put('/post/likes', isAuthenticated, new PostLikeController().handle);
 
 // -- ROUTES POST CATEGORY --
 router.post('/post_category/create_post_category', isAuthenticated, new PostCategoryCreateController().handle);
