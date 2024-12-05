@@ -36,6 +36,7 @@ import { BulkDeletePostsController } from "./controllers/post/BulkDeletePostsCon
 import { GenerateExcelPostsController } from "./controllers/post/GenerateExcelPostsController";
 import { BulkPostsImportController } from "./controllers/post/BulkPostsImportController";
 import { PostLikeController } from "./controllers/post/PostLikeController";
+import { UpdateViewsController } from "./controllers/post/UpdateViewsController";
 
 // -- ROUTES POST CATEGORY --
 import { PostCategoryCreateController } from "./controllers/post_category/PostCategoryCreateController";
@@ -98,6 +99,13 @@ import { GenerateExcelDeleteUserBlogController } from "./controllers/user/user_b
 import { BulkDeleteUsersBlogController } from "./controllers/user/user_blog/BulkDeleteUsersBlogController";
 import { UserBlogDeleteController } from "./controllers/user/user_blog/UserBlogDeleteController";
 
+// -- ROUTES DASHBOARD --
+import { GetPostStatisticsController } from "./controllers/dashboard/GetPostStatisticsController";
+import { GetCategoryStatisticsController } from "./controllers/dashboard/GetCategoryStatisticsController";
+import { GetNewsletterStatisticsController } from "./controllers/dashboard/GetNewsletterStatisticsController";
+import { GetCommentStatisticsController } from "./controllers/dashboard/GetCommentStatisticsController";
+import { GetContactStatisticsController } from "./controllers/dashboard/GetContactStatisticsController";
+
 
 
 const router = Router();
@@ -146,6 +154,7 @@ router.post('/post/bulk_delete_posts', isAuthenticated, temp_file.single('file')
 router.get('/post/donwload_excel_posts', isAuthenticated, new GenerateExcelPostsController().handle);
 router.post('/post/bulk_posts', isAuthenticated, temp_file.single("file"), new BulkPostsImportController().handle);
 router.put('/post/likes', isAuthenticated, new PostLikeController().handle);
+router.patch("/post/:post_id/views", new UpdateViewsController().handle);
 
 // -- ROUTES POST CATEGORY --
 router.post('/post_category/create_post_category', isAuthenticated, new PostCategoryCreateController().handle);
@@ -199,6 +208,13 @@ router.put('/user/user_blog/update', isAuthenticated, upload_image.single('file'
 router.get('/user/user_blog/download_excel_delete_users_blog', isAuthenticated, new GenerateExcelDeleteUserBlogController().handle);
 router.post('/user/user_blog/bulk_delete_users_blog', isAuthenticated, temp_file.single('file'), new BulkDeleteUsersBlogController().handle);
 router.delete('/user/user_blog/delete_user_blog', isAuthenticated, new UserBlogDeleteController().handle);
+
+// -- ROUTES DASHBOARD --
+router.get('/dashboard/posts/statistics', isAuthenticated, new GetPostStatisticsController().handle);
+router.get('/dashboard/categories/statistics', isAuthenticated, new GetCategoryStatisticsController().handle);
+router.get('/dashboard/newslatter/statistics', isAuthenticated, new GetNewsletterStatisticsController().handle);
+router.get('/dashboard/comment/statistics', isAuthenticated, new GetCommentStatisticsController().handle);
+router.get('/dashboard/contact/statistics', isAuthenticated, new GetContactStatisticsController().handle);
 
 
 export { router }
