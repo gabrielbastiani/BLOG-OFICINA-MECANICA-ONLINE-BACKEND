@@ -283,3 +283,40 @@ model NotificationUserBlog {
 
   @@map("notificationuserblogs")
 }
+
+model MarketingPublication {
+  id           String       @id @default(uuid()) @db.Uuid
+  title        String?      @db.VarChar(555)
+  description  String?      @db.VarChar(7000)
+  image_url    String?      @db.VarChar(4083)
+  redirect_url String?      @db.VarChar(5083)
+  clicks       Int?         @default(0)
+  local_site   String?
+  status       StatusBanner @default(Disponivel)
+  publish_at   DateTime?
+
+  marketingPublicationView MarketingPublicationView[]
+
+  created_at DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at DateTime? @updatedAt
+
+  @@map("marketingpublications")
+}
+
+enum StatusBanner {
+  Disponivel
+  Indisponivel
+}
+
+model MarketingPublicationView {
+  id                      String               @id @default(uuid()) @db.Uuid
+  marketingPublication    MarketingPublication @relation(fields: [marketingPublication_id], references: [id])
+  marketingPublication_id String               @db.Uuid
+  local_site              String?
+  ipAddress               String?              @db.VarChar(45)
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+
+  @@unique([marketingPublication_id, ipAddress])
+  @@map("marketingpublicationviews")
+}
