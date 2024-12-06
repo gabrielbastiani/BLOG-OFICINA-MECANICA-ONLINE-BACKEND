@@ -26,10 +26,13 @@ class GetContactStatisticsService {
             },
         });
 
+        const totalFormContacts = await prismaClient.form_contact.count();
+
         return {
             dailyCount,
             weeklyCount,
             monthlyCount,
+            totalFormContacts
         };
     }
 }

@@ -7,7 +7,9 @@ class GetCommentStatisticsService {
       _count: { id: true },
     });
 
-    return { commentsByStatus };
+    const totalComment = await prismaClient.comment.count();
+
+    return { commentsByStatus, totalComment };
   }
 }
 

@@ -11,7 +11,9 @@ class GetNewsletterStatisticsService {
         const weeklyCount = await prismaClient.newsletter.count({ where: { created_at: { gte: thisWeek } } });
         const monthlyCount = await prismaClient.newsletter.count({ where: { created_at: { gte: thisMonth } } });
 
-        return { dailyCount, weeklyCount, monthlyCount };
+        const totalNewslatters = await prismaClient.newsletter.count();
+
+        return { dailyCount, weeklyCount, monthlyCount, totalNewslatters };
     }
 }
 

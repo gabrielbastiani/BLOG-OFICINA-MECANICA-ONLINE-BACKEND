@@ -105,6 +105,7 @@ import { GetCategoryStatisticsController } from "./controllers/dashboard/GetCate
 import { GetNewsletterStatisticsController } from "./controllers/dashboard/GetNewsletterStatisticsController";
 import { GetCommentStatisticsController } from "./controllers/dashboard/GetCommentStatisticsController";
 import { GetContactStatisticsController } from "./controllers/dashboard/GetContactStatisticsController";
+import { GetUserGrowthMetricsController } from "./controllers/dashboard/GetUserGrowthMetricsController";
 
 
 
@@ -215,6 +216,7 @@ router.get('/dashboard/categories/statistics', isAuthenticated, new GetCategoryS
 router.get('/dashboard/newslatter/statistics', isAuthenticated, new GetNewsletterStatisticsController().handle);
 router.get('/dashboard/comment/statistics', isAuthenticated, new GetCommentStatisticsController().handle);
 router.get('/dashboard/contact/statistics', isAuthenticated, new GetContactStatisticsController().handle);
+router.get('/dashboard/userBlog/statistics', isAuthenticated, new GetUserGrowthMetricsController().handle);
 
 
 export { router }
