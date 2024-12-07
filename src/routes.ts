@@ -110,6 +110,8 @@ import { GetUserGrowthMetricsController } from "./controllers/dashboard/GetUserG
 // -- ROUTES MARKETING --
 import { CreateMarketingPublicationController } from "./controllers/marketing_publication/CreateMarketingPublicationController";
 import { UpdateViewsPuplicationsController } from "./controllers/marketing_publication/UpdateViewsPuplicationsController";
+import { CreatePopupController } from "./controllers/marketing_publication/CreatePopupController";
+import { ListActivePopupsController } from "./controllers/marketing_publication/ListActivePopupsController";
 
 
 
@@ -225,6 +227,8 @@ router.get('/dashboard/userBlog/statistics', isAuthenticated, new GetUserGrowthM
 // -- ROUTES MARKETING --
 router.post('/marketing_publication/create', isAuthenticated, upload_image.single('file'), new CreateMarketingPublicationController().handle);
 router.patch("/marketing_publication/:marketingPublication_id/clicks", new UpdateViewsPuplicationsController().handle);
+router.post('/marketing_publication/popups', isAuthenticated, new CreatePopupController().handle);
+router.get('/marketing_publication/popups/active', isAuthenticated, new ListActivePopupsController().handle);
 
 
 export { router }

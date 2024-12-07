@@ -285,15 +285,19 @@ model NotificationUserBlog {
 }
 
 model MarketingPublication {
-  id           String       @id @default(uuid()) @db.Uuid
-  title        String?      @db.VarChar(555)
-  description  String?      @db.VarChar(7000)
-  image_url    String?      @db.VarChar(4083)
-  redirect_url String?      @db.VarChar(5083)
-  clicks       Int?         @default(0)
-  local_site   String?
-  status       StatusBanner @default(Disponivel)
-  publish_at   DateTime?
+  id               String       @id @default(uuid()) @db.Uuid
+  title            String?      @db.VarChar(555)
+  description      String?      @db.VarChar(7000)
+  image_url        String?      @db.VarChar(4083)
+  redirect_url     String?      @db.VarChar(5083)
+  clicks           Int?         @default(0)
+  local_site       String?
+  status           StatusBanner @default(Disponivel)
+  publish_at       DateTime?
+  is_popup         Boolean      @default(false)
+  popup_position   String?      @db.VarChar(50) // Exemplo: 'top-right', 'center'
+  popup_behavior   String?      @db.VarChar(100) // Exemplo: 'on_load', 'on_scroll'
+  popup_conditions String?      @db.VarChar(1000) // JSON string para condições dinâmicas (ex.: {"page": "/home"})
 
   marketingPublicationView MarketingPublicationView[]
 
