@@ -14,6 +14,7 @@ class GetPostStatisticsService {
 
         const dailyViews = await prismaClient.post.findMany({
             where: {
+                status: "Disponivel",
                 updated_at: { gte: today },
             },
             select: {
@@ -24,6 +25,7 @@ class GetPostStatisticsService {
 
         const weeklyViews = await prismaClient.post.findMany({
             where: {
+                status: "Disponivel",
                 updated_at: { gte: thisWeek },
             },
             select: {
@@ -34,6 +36,7 @@ class GetPostStatisticsService {
 
         const monthlyViews = await prismaClient.post.findMany({
             where: {
+                status: "Disponivel",
                 updated_at: { gte: thisMonth },
             },
             select: {
