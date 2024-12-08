@@ -89,6 +89,9 @@ class GetPostStatisticsService {
         }, {});
 
         const metrics = await prismaClient.post.findMany({
+            where: {
+                status: "Disponivel"
+            },
             select: {
                 id: true,
                 title: true,
@@ -104,7 +107,16 @@ class GetPostStatisticsService {
                 : post.title,
         }));
 
-        return { totalPosts, postsByStatus, dailyViews, weeklyViews, monthlyViews, calendarData, totalPostsPublish, metricsPostsLikesDislikes };
+        return {
+            totalPosts,
+            postsByStatus,
+            dailyViews,
+            weeklyViews,
+            monthlyViews,
+            calendarData,
+            totalPostsPublish,
+            metricsPostsLikesDislikes
+        };
     }
 }
 
