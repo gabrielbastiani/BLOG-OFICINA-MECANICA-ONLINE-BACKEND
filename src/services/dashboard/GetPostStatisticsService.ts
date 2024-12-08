@@ -88,7 +88,23 @@ class GetPostStatisticsService {
             return acc;
         }, {});
 
-        return { totalPosts, postsByStatus, dailyViews, weeklyViews, monthlyViews, calendarData, totalPostsPublish };
+        const metrics = await prismaClient.post.findMany({
+            select: {
+                id: true,
+                title: true,
+                post_like: true,
+                post_dislike: true,
+            }
+        });
+
+        const metricsPostsLikesDislikes = metrics.map((post) => ({
+            ...post,
+            title: post.title.length > 30
+                ? `${post.title.slice(0, 30)}...`
+                : post.title,
+        }));
+
+        return { totalPosts, postsByStatus, dailyViews, weeklyViews, monthlyViews, calendarData, totalPostsPublish, metricsPostsLikesDislikes };
     }
 }
 
