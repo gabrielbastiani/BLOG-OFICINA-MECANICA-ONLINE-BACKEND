@@ -161,8 +161,8 @@ model PostLike {
 
 model PostView {
   id        String  @id @default(uuid()) @db.Uuid
-  post      Post    @relation(fields: [post_id], references: [id])
-  post_id   String  @db.Uuid
+  post      Post?   @relation(fields: [post_id], references: [id], onDelete: SetNull)
+  post_id   String? @db.Uuid
   ipAddress String? @db.VarChar(45)
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
@@ -293,11 +293,14 @@ model MarketingPublication {
   clicks           Int?         @default(0)
   local_site       String?
   status           StatusBanner @default(Disponivel)
-  publish_at       DateTime?
+  publish_at_start DateTime?
+  publish_at_end   DateTime?
+  is_processing    Boolean      @default(false)
+  email_sent       Boolean      @default(false) // Indica se o email já foi enviado
   is_popup         Boolean      @default(false)
   popup_position   String?      @db.VarChar(50) // Exemplo: 'top-right', 'center'
   popup_behavior   String?      @db.VarChar(100) // Exemplo: 'on_load', 'on_scroll'
-  popup_conditions String?      @db.VarChar(1000) // JSON string para condições dinâmicas (ex.: {"page": "/home"})
+  popup_conditions Json? // JSON string para condições dinâmicas (ex.: {"page": "/home"})
 
   marketingPublicationView MarketingPublicationView[]
 
@@ -313,11 +316,11 @@ enum StatusBanner {
 }
 
 model MarketingPublicationView {
-  id                      String               @id @default(uuid()) @db.Uuid
-  marketingPublication    MarketingPublication @relation(fields: [marketingPublication_id], references: [id])
-  marketingPublication_id String               @db.Uuid
+  id                      String                @id @default(uuid()) @db.Uuid
+  marketingPublication    MarketingPublication? @relation(fields: [marketingPublication_id], references: [id], onDelete: SetNull)
+  marketingPublication_id String?               @db.Uuid
   local_site              String?
-  ipAddress               String?              @db.VarChar(45)
+  ipAddress               String?               @db.VarChar(45)
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
 

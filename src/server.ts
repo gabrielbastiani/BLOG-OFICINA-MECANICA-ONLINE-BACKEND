@@ -4,6 +4,8 @@ import cors from 'cors';
 import { router } from './routes';
 import path from 'path';
 import "./services/post/PostPublishScheduler";
+import "./services/marketing_publication/StartMarketingPublicationScheduler";
+import "./services/marketing_publication/EndMarketingPublicationScheduler";
 
 const app = express();
 app.use(cors());

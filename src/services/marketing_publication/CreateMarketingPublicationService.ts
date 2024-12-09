@@ -6,8 +6,14 @@ interface CreateMarketingPublicationServiceProps {
     description?: string;
     image_url?: string;
     redirect_url?: string;
-    publish_at?: Date;
+    publish_at_start?: Date;
+    publish_at_end?: Date;
     status?: "Disponivel" | "Indisponivel";
+    is_popup?: boolean;
+    local_site?: string;
+    popup_position: string;
+    popup_behavior: string;
+    popup_conditions?: string[];
 }
 
 class CreateMarketingPublicationService {
@@ -16,17 +22,28 @@ class CreateMarketingPublicationService {
         description,
         image_url,
         redirect_url,
-        publish_at,
-        status = "Disponivel",
+        publish_at_start,
+        publish_at_end,
+        local_site,
+        status,
+        popup_position,
+        popup_behavior,
+        popup_conditions,
+        is_popup
     }: CreateMarketingPublicationServiceProps) {
-
         const marketing_publication = await prismaClient.marketingPublication.create({
             data: {
                 title,
                 description,
                 image_url,
                 redirect_url,
-                publish_at,
+                publish_at_start,
+                publish_at_end,
+                local_site,
+                is_popup,
+                popup_position,
+                popup_behavior,
+                popup_conditions,
                 status,
             },
         });

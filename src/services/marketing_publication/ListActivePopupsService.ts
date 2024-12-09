@@ -6,7 +6,7 @@ class ListActivePopupsService {
             where: {
                 is_popup: true,
                 status: "Disponivel",
-                publish_at: {
+                publish_at_start: {
                     lte: new Date(),
                 },
             },
@@ -15,8 +15,6 @@ class ListActivePopupsService {
         return popups.map((popup) => ({
             ...popup,
             popup_conditions: popup.popup_conditions
-                ? JSON.parse(popup.popup_conditions)
-                : null,
         }));
     }
 }
