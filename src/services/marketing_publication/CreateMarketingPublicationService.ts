@@ -10,9 +10,9 @@ interface CreateMarketingPublicationServiceProps {
     publish_at_end?: Date;
     status?: "Disponivel" | "Indisponivel";
     is_popup?: boolean;
-    local_site?: string;
-    popup_position: string;
-    popup_behavior: string;
+    local_site?: string[];
+    popup_position?: string[];
+    popup_behavior?: string[];
     popup_conditions?: string[];
 }
 
@@ -58,7 +58,7 @@ class CreateMarketingPublicationService {
 
         const notificationsData = all_user_ids.map((user_id) => ({
             user_id,
-            message: `Publicidade "${title ? title : "Sem titulo"}" foi publicado no blog.`,
+            message: `Publicidade "${title ? title : "Sem titulo"}" cadastrada.`,
             type: "marketing",
         }));
 

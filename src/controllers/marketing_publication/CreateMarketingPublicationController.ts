@@ -24,6 +24,9 @@ class CreateMarketingPublicationController {
 
         const createBannerService = new CreateMarketingPublicationService();
 
+        const parsedlocalSite = local_site ? JSON.parse(local_site) : [];
+        const parsedPopupPosition = popup_position ? JSON.parse(popup_position) : [];
+        const parsedPopupBehavior = popup_behavior ? JSON.parse(popup_behavior) : [];
         const parsedPopupConditions = popup_conditions ? JSON.parse(popup_conditions) : [];
 
         const marketing = await createBannerService.execute({
@@ -33,10 +36,10 @@ class CreateMarketingPublicationController {
             redirect_url,
             publish_at_start: publish_at_start ? new Date(publish_at_start) : undefined,
             publish_at_end: publish_at_end ? new Date(publish_at_end) : undefined,
-            local_site,
+            local_site: parsedlocalSite,
             status: status || "Indisponivel",
-            popup_position,
-            popup_behavior,
+            popup_position: parsedPopupPosition,
+            popup_behavior: parsedPopupBehavior,
             popup_conditions: parsedPopupConditions,
             is_popup: is_popup === "true"
         });

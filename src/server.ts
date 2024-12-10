@@ -4,8 +4,11 @@ import cors from 'cors';
 import { router } from './routes';
 import path from 'path';
 import "./services/post/PostPublishScheduler";
-import "./services/marketing_publication/StartMarketingPublicationScheduler";
-import "./services/marketing_publication/EndMarketingPublicationScheduler";
+import cron from "node-cron";
+import { StartMarketingPublicationScheduler } from './services/marketing_publication/StartMarketingPublicationScheduler';
+import { EndMarketingPublicationScheduler } from './services/marketing_publication/EndMarketingPublicationScheduler';
+const startScheduler = new StartMarketingPublicationScheduler();
+const endScheduler = new EndMarketingPublicationScheduler();
 
 const app = express();
 app.use(cors());
@@ -32,3 +35,11 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.listen(process.env.PORT || 3333, () => console.log('Servidor online!!!!'));
+
+cron.schedule("* * * * *", async () => {
+    await startScheduler.execute();
+
+    setTimeout(async () => {
+        await endScheduler.execute();
+    }, 10000);
+});

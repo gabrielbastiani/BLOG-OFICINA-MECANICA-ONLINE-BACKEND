@@ -291,15 +291,16 @@ model MarketingPublication {
   image_url        String?      @db.VarChar(4083)
   redirect_url     String?      @db.VarChar(5083)
   clicks           Int?         @default(0)
-  local_site       String?
   status           StatusBanner @default(Disponivel)
   publish_at_start DateTime?
   publish_at_end   DateTime?
   is_processing    Boolean      @default(false)
+  is_completed     Boolean      @default(false) // Novo campo para indicar conclusão
   email_sent       Boolean      @default(false) // Indica se o email já foi enviado
   is_popup         Boolean      @default(false)
-  popup_position   String?      @db.VarChar(50) // Exemplo: 'top-right', 'center'
-  popup_behavior   String?      @db.VarChar(100) // Exemplo: 'on_load', 'on_scroll'
+  local_site       Json?
+  popup_position   Json? // Exemplo: 'top-right', 'center'
+  popup_behavior   Json? // Exemplo: 'on_load', 'on_scroll'
   popup_conditions Json? // JSON string para condições dinâmicas (ex.: {"page": "/home"})
 
   marketingPublicationView MarketingPublicationView[]

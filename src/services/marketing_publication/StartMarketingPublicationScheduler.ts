@@ -1,8 +1,9 @@
-import cron from "node-cron";
 import nodemailer from "nodemailer";
 import prismaClient from "../../prisma";
 import path from "path";
 import ejs from "ejs";
+import moment from "moment";
+import { RoleUser } from "@prisma/client";
 
 class StartMarketingPublicationScheduler {
     private transporter;
@@ -27,55 +28,74 @@ class StartMarketingPublicationScheduler {
                 where: {
                     status: "Indisponivel",
                     publish_at_start: { lte: now },
-                    is_processing: false, // Evitar processamento simultâneo
+                    is_processing: false,
+                    is_completed: false, // Não processar se já finalizado
+                    email_sent: false, // Apenas publicações sem email enviado
                 },
             });
 
-            if (publications.length > 0) {
-                for (const pub of publications) {
-                    // Sinaliza início do processamento
-                    await prismaClient.marketingPublication.update({
-                        where: { id: pub.id },
-                        data: { is_processing: true },
-                    });
+            for (const pub of publications) {
+                // Atualiza status para evitar concorrência
+                await prismaClient.marketingPublication.update({
+                    where: { id: pub.id },
+                    data: {
+                        is_processing: true,
+                        status: "Disponivel",
+                    },
+                });
 
-                    // Atualiza status e data de última atualização
-                    await prismaClient.marketingPublication.update({
-                        where: { id: pub.id },
-                        data: {
-                            status: "Disponivel",
-                            is_processing: false, // Finaliza processamento
-                        },
-                    });
+                try {
+                    const start = moment(pub.publish_at_start).format('DD/MM/YYYY HH:mm');
+                    const end = moment(pub.publish_at_end).format('DD/MM/YYYY HH:mm');
+                    
+                    await this.sendEmail(pub.title, start, end);
                     console.log(`Iniciada publicidade: ${pub.title}`);
+                } catch (emailError) {
+                    console.error(`Erro ao enviar email para ${pub.title}:`, emailError);
                 }
+
+                // Finaliza processamento
+                await prismaClient.marketingPublication.update({
+                    where: { id: pub.id },
+                    data: {
+                        is_processing: false,
+                    },
+                });
             }
         } catch (error) {
-            console.error("Erro ao publicar publicações:", error);
+            console.error("Erro ao iniciar publicações:", error);
         }
     }
 
-    private async sendEmail(title: string) {
-        try {
-            const emailTemplatePath = path.join(__dirname, "../emails_transacionais/publicidade_programada.ejs");
+    private async sendEmail(title: string, start: string, end: string) {
+        const emailTemplatePath = path.join(__dirname, "../emails_transacionais/publicidade_programada.ejs");
 
-            const htmlContent = await ejs.renderFile(emailTemplatePath, { title });
+        const htmlContent = await ejs.renderFile(emailTemplatePath, { title, start, end });
 
-            await this.transporter.sendMail({
-                from: "Blog Oficina Mecânica Online <contato.graxa@oficinamecanicaonline.com>",
-                to: "contato.graxa@oficinamecanicaonline.com",
-                subject: "Publicidade Programada Iniciada",
-                html: htmlContent,
-            });
-        } catch (error) {
-            console.error("Erro ao enviar email:", error);
-        }
+        await this.transporter.sendMail({
+            from: "Blog Oficina Mecânica Online <contato.graxa@oficinamecanicaonline.com>",
+            to: "contato.graxa@oficinamecanicaonline.com",
+            subject: "Publicidade Programada Iniciada",
+            html: htmlContent,
+        });
+
+        const users_superAdmins = await prismaClient.user.findMany({ where: { role: RoleUser.SUPER_ADMIN } });
+        const users_admins = await prismaClient.user.findMany({ where: { role: RoleUser.ADMIN } });
+
+        const all_user_ids = [
+            ...users_superAdmins.map((user) => user.id),
+            ...users_admins.map((user) => user.id),
+        ];
+
+        const notificationsData = all_user_ids.map((user_id) => ({
+            user_id,
+            message: `Publicidade programada "${title ? title : "Sem titulo"}" foi publicado no blog.`,
+            type: "marketing",
+        }));
+
+        await prismaClient.notificationUser.createMany({ data: notificationsData });
     }
+
 }
-
-const scheduler = new StartMarketingPublicationScheduler();
-cron.schedule("*/3 * * * *", () => {
-    scheduler.execute();
-});
 
 export { StartMarketingPublicationScheduler };
