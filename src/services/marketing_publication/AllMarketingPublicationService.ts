@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 
 class AllMarketingPublicationService {
     async execute(
+        marketing_content_id?: string,
         page: number = 1,
         limit: number = 5,
         search: string = "",
@@ -48,7 +49,20 @@ class AllMarketingPublicationService {
             where: whereClause,
         });
 
+        // --- UNIQUE POST ---//
+
+        let marketing_content_unique = null;
+
+        if (marketing_content_id) {
+            marketing_content_unique = await prismaClient.marketingPublication.findUnique({
+                where: {
+                    id: marketing_content_id,
+                }
+            });
+        }
+
         return {
+            unique_marketing_content: marketing_content_unique,
             publications: all_publications,
             currentPage: page,
             totalPages: Math.ceil(total_publications / limit),

@@ -115,6 +115,7 @@ import { AllMarketingPublicationController } from "./controllers/marketing_publi
 import { MarketingUpdateDataController } from "./controllers/marketing_publication/MarketingUpdateDataController";
 import { GenerateExcelDeletePublicationController } from "./controllers/marketing_publication/GenerateExcelDeletePublicationController";
 import { BulkDeleteMarketingPublicationController } from "./controllers/marketing_publication/BulkDeleteMarketingPublicationController";
+import { MarketingPublicationDeleteDeleteController } from "./controllers/marketing_publication/MarketingPublicationDeleteDeleteController";
 
 
 
@@ -236,6 +237,7 @@ router.put('/marketing_publication/delete_image', isAuthenticated, new CategoryD
 router.put('/marketing_publication/update', isAuthenticated, upload_image.single('file'), new MarketingUpdateDataController().handle);
 router.get('/marketing_publication/download_excel_delete_marketing', isAuthenticated, new GenerateExcelDeletePublicationController().handle);
 router.post('/marketing_publication/bulk_delete_publications', isAuthenticated, temp_file.single('file'), new BulkDeleteMarketingPublicationController().handle);
+router.delete('/marketing_publication/delete_publications', isAuthenticated, new MarketingPublicationDeleteDeleteController().handle);
 
 
 export { router }
