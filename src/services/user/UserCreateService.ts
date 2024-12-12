@@ -76,17 +76,17 @@ class UserCreateService {
                     role: RoleUser.SUPER_ADMIN
                 }
             });
-    
+
             const all_user_ids = [
                 ...users_superAdmins.map(user => user.id)
             ];
-    
+
             const notificationsData = all_user_ids.map(user_id => ({
                 user_id,
                 message: "Usuário criado com sucesso",
                 type: "user"
             }));
-    
+
             await prismaClient.notificationUser.createMany({
                 data: notificationsData
             });
@@ -98,9 +98,9 @@ class UserCreateService {
             });
 
             await transporter.sendMail({
-                from: `Blog oficina mecânica online <contato.graxa@oficinamecanicaonline.com>`,
-                to: "contato.graxa@oficinamecanicaonline.com",
-                subject: `Novo usuario se cadastrando no CMS do blog da Oficina mecânica online`,
+                from: `infos_blog.name <infos_blog.email>`,
+                to: "infos_blog.email",
+                subject: `Novo usuario se cadastrando no CMS do infos_blog.name`,
                 html: data
             });
 
@@ -115,9 +115,9 @@ class UserCreateService {
                 });
 
                 await transporter.sendMail({
-                    from: `Blog oficina mecânica online <contato.graxa@oficinamecanicaonline.com>`,
+                    from: `infos_blog.name <infos_blog.email>`,
                     to: user_create.email,
-                    subject: `Dados de acesso CMS do blog da Oficina mecânica online`,
+                    subject: `Dados de acesso CMS do infos_blog.name`,
                     html: data
                 });
 
@@ -138,6 +138,66 @@ class UserCreateService {
             }
         });
 
+        try {
+            await prismaClient.configurationMarketingPublication.create({
+                data: {
+                    local_site: "Home parte superior",
+                    value: 'top_home'
+                }
+            });
+
+            await prismaClient.configurationMarketingPublication.create({
+                data: {
+                    local_site: "Página de post",
+                    value: 'inside-post'
+                }
+            });
+
+            await prismaClient.configurationMarketingPublication.create({
+                data: {
+                    popup_behavior: "Em quanto rola a página",
+                    value: 'on_load'
+                }
+            });
+
+            await prismaClient.configurationMarketingPublication.create({
+                data: {
+                    popup_behavior: "Em quanto carrega uma página",
+                    value: 'on_scroll'
+                }
+            });
+
+            await prismaClient.configurationMarketingPublication.create({
+                data: {
+                    popup_conditions: "Página inicial",
+                    value: '/'
+                }
+            });
+
+            await prismaClient.configurationMarketingPublication.create({
+                data: {
+                    popup_conditions: "Página do post",
+                    value: '/postPage'
+                }
+            });
+
+            await prismaClient.configurationMarketingPublication.create({
+                data: {
+                    popup_position: "Parte superior direita",
+                    value: 'top-right'
+                }
+            });
+
+            await prismaClient.configurationMarketingPublication.create({
+                data: {
+                    popup_position: "Parte central",
+                    value: 'center'
+                }
+            });
+        } catch (error) {
+            console.log(error)
+        }
+
         const transporter = nodemailer.createTransport({
             host: process.env.HOST_SMTP,
             port: 465,
@@ -147,16 +207,20 @@ class UserCreateService {
             }
         });
 
+        const infos_blog = await prismaClient.configurationBlog.findFirst();
+
         const requiredPath = path.join(__dirname, `../emails_transacionais/criacao_de_super_administrador.ejs`);
 
         const data = await ejs.renderFile(requiredPath, {
-            name: user_create_super_admin.name
+            name: user_create_super_admin.name,
+            logo: infos_blog.logo,
+            name_blog: infos_blog.name
         });
 
         await transporter.sendMail({
-            from: `Blog oficina mecânica online <contato.graxa@oficinamecanicaonline.com>`,
+            from: `${infos_blog.name}`,
             to: user_create_super_admin.email,
-            subject: `Novo super administrador se cadastrando no CMS do blog da Oficina mecânica online`,
+            subject: `Novo super administrador se cadastrando no CMS do ${infos_blog.name}`,
             html: data
         });
 

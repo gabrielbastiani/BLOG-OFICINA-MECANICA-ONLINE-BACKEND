@@ -25,7 +25,7 @@ class EndMarketingPublicationScheduler {
             // Busca publicações que precisam ser encerradas e não estão em processamento
             const publications = await prismaClient.marketingPublication.findMany({
                 where: {
-                    status: "Disponivel",
+                    status: "Fim_da_programacao",
                     publish_at_end: { lte: now },
                     is_processing: false,
                     email_sent: false, // Apenas publicações sem email enviado
@@ -71,13 +71,16 @@ class EndMarketingPublicationScheduler {
     }
 
     private async sendEmail(title: string, start: string, end: string) {
+        const infos_blog = await prismaClient.configurationBlog.findFirst();
+        const name_blog = infos_blog.name;
+        const logo = infos_blog.logo;
         const emailTemplatePath = path.join(__dirname, "../emails_transacionais/encerrar_publicidade_programada.ejs");
 
-        const htmlContent = await ejs.renderFile(emailTemplatePath, { title, start, end });
+        const htmlContent = await ejs.renderFile(emailTemplatePath, { title, start, end, name_blog, logo });
 
         await this.transporter.sendMail({
-            from: "Blog Oficina Mecânica Online <contato.graxa@oficinamecanicaonline.com>",
-            to: "contato.graxa@oficinamecanicaonline.com",
+            from: `${infos_blog.name}`,
+            to: `${infos_blog.email}`,
             subject: "Publicidade Programada Encerrada",
             html: htmlContent,
         });

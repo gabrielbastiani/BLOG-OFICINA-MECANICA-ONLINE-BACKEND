@@ -12,10 +12,7 @@ class MarketingUpdateDataController {
             redirect_url,
             publish_at_start,
             publish_at_end,
-            local_site,
-            popup_position,
-            popup_behavior,
-            popup_conditions
+            configurationMarketingPublication
         } = req.body;
 
         const update_publication = new MarketingUpdateDataService();
@@ -34,10 +31,7 @@ class MarketingUpdateDataController {
             redirect_url,
             publish_at_start,
             publish_at_end,
-            local_site,
-            popup_position,
-            popup_behavior,
-            popup_conditions
+            configurationMarketingPublication: configurationMarketingPublication ? JSON.parse(configurationMarketingPublication) : undefined,
         });
 
         return res.json(publications);

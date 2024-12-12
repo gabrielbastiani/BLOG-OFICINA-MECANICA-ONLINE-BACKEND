@@ -39,15 +39,19 @@ class RequestPasswordUserRecoveryService {
       }
     });
 
+    const infos_blog = await prismaClient.configurationBlog.findFirst();
+
     const requiredPath = path.join(__dirname, `../emails_transacionais/recuperar_senha.ejs`);
 
     const data = await ejs.renderFile(requiredPath, {
       name: user.name,
-      id: recovery.id
+      id: recovery.id,
+      logo: infos_blog.logo,
+      name_blog: infos_blog.name
     });
 
     await transporter.sendMail({
-      from: `Blog oficina mecânica online <contato.graxa@oficinamecanicaonline.com>`,
+      from: `${infos_blog.name}`,
       to: user.email,
       subject: "Recuperação de senha",
       html: data

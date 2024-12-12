@@ -1,4 +1,4 @@
-import { StatusBanner } from '@prisma/client';
+import { StatusMarketingPublication } from '@prisma/client';
 import prismaClient from '../../prisma';
 import fs from 'fs';
 import path from 'path';
@@ -12,10 +12,7 @@ interface PublicationProps {
     redirect_url?: string;
     publish_at_start?: Date;
     publish_at_end?: Date;
-    local_site?: string[];
-    popup_position?: string[];
-    popup_behavior?: string[];
-    popup_conditions?: string[];
+    configurationMarketingPublication?: string[];
 }
 
 class MarketingUpdateDataService {
@@ -28,10 +25,7 @@ class MarketingUpdateDataService {
         redirect_url,
         publish_at_start,
         publish_at_end,
-        local_site,
-        popup_position,
-        popup_behavior,
-        popup_conditions
+        configurationMarketingPublication
     }: PublicationProps) {
 
         const marketingPublication = await prismaClient.marketingPublication.findUnique({
@@ -64,7 +58,7 @@ class MarketingUpdateDataService {
         }
 
         if (status) {
-            dataToUpdate.status = status as StatusBanner;
+            dataToUpdate.status = status as StatusMarketingPublication;
         }
 
         if (redirect_url) {
@@ -79,20 +73,21 @@ class MarketingUpdateDataService {
             dataToUpdate.publish_at_end = publish_at_end;
         }
 
-        if (local_site) {
-            dataToUpdate.local_site = local_site;
-        }
+        if (configurationMarketingPublication) {
+            // Deletar antigas
+            await prismaClient.configurationMarketingOnPublication.deleteMany({
+                where: { marketingPublication_id },
+            });
 
-        if (popup_position) {
-            dataToUpdate.popup_position = popup_position;
-        }
+            // Adicionar novas
+            const configurationRelation = configurationMarketingPublication.map((configurationMarketingPublication_id) => ({
+                marketingPublication_id,
+                configurationMarketingPublication_id,
+            }));
 
-        if (popup_behavior) {
-            dataToUpdate.popup_behavior = popup_behavior;
-        }
-
-        if (popup_conditions) {
-            dataToUpdate.popup_conditions = popup_conditions;
+            await prismaClient.configurationMarketingOnPublication.createMany({
+                data: configurationRelation,
+            });
         }
 
         const update_publications = await prismaClient.marketingPublication.update({

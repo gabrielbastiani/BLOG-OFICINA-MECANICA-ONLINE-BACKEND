@@ -78,6 +78,35 @@ model PasswordRecoveryUser {
   @@map("passwordrecoveryusers")
 }
 
+model ConfigurationBlog {
+  id               String  @id @default(uuid())
+  name             String? @db.VarChar(725)
+  email            String? @db.VarChar(725)
+  phone            String? @db.VarChar(725)
+  logo             String?
+  description_blog String? @db.VarChar(15725)
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt
+
+  @@map("configurationsblog")
+}
+
+model Sitemap {
+  id             String  @id @default(uuid())
+  post           Post?   @relation(fields: [post_id], references: [id])
+  post_id        String? @unique @db.Uuid
+  custom_url_map String  @unique
+  priority       Float   @default(0.5)
+  changefreq     String  @default("weekly")
+  is_indexed     Boolean @default(true)
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt
+
+  @@map("sitemaps")
+}
+
 model Category {
   id                 String           @id @default(uuid())
   name_category      String           @unique
@@ -127,12 +156,16 @@ model Post {
   post_like       Int?       @default(0)
   post_dislike    Int?       @default(0)
   views           Int?       @default(0)
+  seo_description String?    @db.VarChar(300)
+  seo_keywords    String?    @db.VarChar(500)
+  custom_url      String?    @unique
 
   tags       TagOnPost[]
   categories CategoryOnPost[]
   comment    Comment[]
   postLike   PostLike[]
   postView   PostView[]
+  sitemap    Sitemap?
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt
@@ -284,26 +317,39 @@ model NotificationUserBlog {
   @@map("notificationuserblogs")
 }
 
+model ConfigurationMarketingPublication {
+  id               String  @id @default(uuid())
+  value            String?
+  local_site       String?
+  popup_position   String?
+  popup_behavior   String?
+  popup_conditions String?
+
+  configurationMarketingOnPublication ConfigurationMarketingOnPublication[]
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt
+
+  @@map("configurationsmarketingpublications")
+}
+
 model MarketingPublication {
-  id               String       @id @default(uuid()) @db.Uuid
-  title            String?      @db.VarChar(555)
-  description      String?      @db.VarChar(7000)
-  image_url        String?      @db.VarChar(4083)
-  redirect_url     String?      @db.VarChar(5083)
-  clicks           Int?         @default(0)
-  status           StatusBanner @default(Disponivel)
+  id               String                     @id @default(uuid()) @db.Uuid
+  title            String?                    @db.VarChar(555)
+  description      String?                    @db.VarChar(7000)
+  image_url        String?                    @db.VarChar(4083)
+  redirect_url     String?                    @db.VarChar(5083)
+  clicks           Int?                       @default(0)
+  status           StatusMarketingPublication @default(Disponivel)
   publish_at_start DateTime?
   publish_at_end   DateTime?
-  is_processing    Boolean      @default(false)
-  is_completed     Boolean      @default(false) // Novo campo para indicar conclusão
-  email_sent       Boolean      @default(false) // Indica se o email já foi enviado
-  is_popup         Boolean      @default(false)
-  local_site       Json?
-  popup_position   Json? // Exemplo: 'top-right', 'center'
-  popup_behavior   Json? // Exemplo: 'on_load', 'on_scroll'
-  popup_conditions Json? // JSON string para condições dinâmicas (ex.: {"page": "/home"})
+  is_processing    Boolean                    @default(false)
+  is_completed     Boolean                    @default(false)
+  email_sent       Boolean                    @default(false)
+  is_popup         Boolean                    @default(false)
 
-  marketingPublicationView MarketingPublicationView[]
+  marketingPublicationView            MarketingPublicationView[]
+  configurationMarketingOnPublication ConfigurationMarketingOnPublication[]
 
   created_at DateTime  @default(now()) @db.Timestamptz(3)
   updated_at DateTime? @updatedAt
@@ -311,7 +357,9 @@ model MarketingPublication {
   @@map("marketingpublications")
 }
 
-enum StatusBanner {
+enum StatusMarketingPublication {
+  Programado
+  Fim_da_programacao
   Disponivel
   Indisponivel
 }
@@ -327,4 +375,15 @@ model MarketingPublicationView {
 
   @@unique([marketingPublication_id, ipAddress])
   @@map("marketingpublicationviews")
+}
+
+model ConfigurationMarketingOnPublication {
+  id                                   String                            @id @default(uuid()) @db.Uuid
+  marketingPublication                 MarketingPublication              @relation(fields: [marketingPublication_id], references: [id], onDelete: Cascade)
+  marketingPublication_id              String                            @db.Uuid
+  configurationMarketingPublication    ConfigurationMarketingPublication @relation(fields: [configurationMarketingPublication_id], references: [id])
+  configurationMarketingPublication_id String
+
+  @@unique([marketingPublication_id, configurationMarketingPublication_id])
+  @@map("configurationsmarketingonpublications")
 }

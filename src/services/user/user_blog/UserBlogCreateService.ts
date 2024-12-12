@@ -98,16 +98,20 @@ class UserBlogCreateService {
             }
         });
 
+        const infos_blog = await prismaClient.configurationBlog.findFirst();
+
         const requiredPath = path.join(__dirname, `../../emails_transacionais/criacao_de_usuario_blog.ejs`);
 
         const data = await ejs.renderFile(requiredPath, {
-            name: name
+            name: name,
+            logo: infos_blog.logo,
+            name_blog: infos_blog.name
         });
 
         await transporter.sendMail({
-            from: `Blog oficina mecânica online <contato.graxa@oficinamecanicaonline.com>`,
-            to: "contato.graxa@oficinamecanicaonline.com",
-            subject: `Novo usuario do blog da Oficina mecânica online`,
+            from: `${infos_blog.name}`,
+            to: "infos_blog.email",
+            subject: `Novo usuario do ${infos_blog.name}`,
             html: data
         });
 

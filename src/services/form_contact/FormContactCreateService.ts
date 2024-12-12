@@ -70,18 +70,22 @@ class FormContactCreateService {
             }
         });
 
+        const infos_blog = await prismaClient.configurationBlog.findFirst();
+
         const requiredPath = path.join(__dirname, `../emails_transacionais/criacao_de_mensagem_formulario.ejs`);
 
         const data = await ejs.renderFile(requiredPath, {
             name: name_user,
             menssage: menssage,
-            subject: subject
+            subject: subject,
+            logo: infos_blog.logo,
+            name_blog: infos_blog.name
         });
 
         await transporter.sendMail({
             from: `${email_user}`,
-            to: "contato.graxa@oficinamecanicaonline.com",
-            subject: `Alguém enviou uma mensagem para o Blog Oficina mecânica online`,
+            to: `${infos_blog.email}`,
+            subject: `Alguém enviou uma mensagem para o ${infos_blog.name}`,
             html: data
         });
 

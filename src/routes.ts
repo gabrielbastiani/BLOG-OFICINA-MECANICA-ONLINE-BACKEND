@@ -3,6 +3,9 @@ import multer from 'multer';
 import uploadConfig from './config/multer';
 import { isAuthenticated } from "./middlewares/isAuthenticated";
 
+// -- ROUTES CONFIGURATION BLOG --
+import { CreateConfigurationBlogController } from "./controllers/configuration_blog/CreateConfigurationBlogController";
+
 // -- ROUTES USERS --
 import { UserCreateController } from "./controllers/user/UserCreateController";
 import { BulkUserImportController } from "./controllers/user/BulkUserImportController";
@@ -110,7 +113,6 @@ import { GetUserGrowthMetricsController } from "./controllers/dashboard/GetUserG
 // -- ROUTES MARKETING --
 import { CreateMarketingPublicationController } from "./controllers/marketing_publication/CreateMarketingPublicationController";
 import { UpdateViewsPuplicationsController } from "./controllers/marketing_publication/UpdateViewsPuplicationsController";
-import { ListActivePopupsController } from "./controllers/marketing_publication/ListActivePopupsController";
 import { AllMarketingPublicationController } from "./controllers/marketing_publication/AllMarketingPublicationController";
 import { MarketingUpdateDataController } from "./controllers/marketing_publication/MarketingUpdateDataController";
 import { GenerateExcelDeletePublicationController } from "./controllers/marketing_publication/GenerateExcelDeletePublicationController";
@@ -119,10 +121,14 @@ import { MarketingPublicationDeleteDeleteController } from "./controllers/market
 
 
 
+
 const router = Router();
 const upload_image = multer(uploadConfig.upload("./images"));
 const temp_file = multer(uploadConfig.upload("./temp_file"));
 
+
+// -- ROUTES CONFIGURATION BLOG --
+router.post('/configuration_blog/create', upload_image.single('file'), new CreateConfigurationBlogController().handle);
 
 // -- ROUTES USERS --
 router.post('/user/create', upload_image.single('file'), new UserCreateController().handle);
@@ -231,7 +237,6 @@ router.get('/dashboard/userBlog/statistics', isAuthenticated, new GetUserGrowthM
 // -- ROUTES MARKETING --
 router.post('/marketing_publication/create', isAuthenticated, upload_image.single('file'), new CreateMarketingPublicationController().handle);
 router.patch('/marketing_publication/:marketingPublication_id/clicks', new UpdateViewsPuplicationsController().handle);
-router.get('/marketing_publication/popups/active', isAuthenticated, new ListActivePopupsController().handle);
 router.get('/marketing_publication/all_publications', isAuthenticated, new AllMarketingPublicationController().handle);
 router.put('/marketing_publication/delete_image', isAuthenticated, new CategoryDeleteImageController().handle);
 router.put('/marketing_publication/update', isAuthenticated, upload_image.single('file'), new MarketingUpdateDataController().handle);

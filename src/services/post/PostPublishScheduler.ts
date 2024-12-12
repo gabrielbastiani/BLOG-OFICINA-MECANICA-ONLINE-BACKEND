@@ -51,16 +51,19 @@ class PostPublishScheduler {
 
     private async sendEmail(postTitle: string) {
         try {
+            const infos_blog = await prismaClient.configurationBlog.findFirst();
             const requiredPath = path.join(__dirname, `../emails_transacionais/post_programado.ejs`);
 
             const data = await ejs.renderFile(requiredPath, {
-                title: postTitle
+                title: postTitle,
+                logo: infos_blog.logo,
+                name_blog: infos_blog.name
             });
 
             await this.transporter.sendMail({
-                from: `Blog oficina mecânica online <contato.graxa@oficinamecanicaonline.com>`,
-                to: "contato.graxa@oficinamecanicaonline.com",
-                subject: `Post programado publicado no blog da Oficina mecânica online`,
+                from: `${infos_blog.name}`,
+                to: `${infos_blog.email}`,
+                subject: `Post programado publicado no ${infos_blog.name}`,
                 html: data
             });
         } catch (error) {

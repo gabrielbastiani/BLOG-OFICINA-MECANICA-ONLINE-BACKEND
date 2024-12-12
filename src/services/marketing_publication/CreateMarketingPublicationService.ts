@@ -10,10 +10,7 @@ interface CreateMarketingPublicationServiceProps {
     publish_at_end?: Date;
     status?: "Disponivel" | "Indisponivel";
     is_popup?: boolean;
-    local_site?: string[];
-    popup_position?: string[];
-    popup_behavior?: string[];
-    popup_conditions?: string[];
+    configurationMarketingPublication?: string[];
 }
 
 class CreateMarketingPublicationService {
@@ -24,11 +21,8 @@ class CreateMarketingPublicationService {
         redirect_url,
         publish_at_start,
         publish_at_end,
-        local_site,
         status,
-        popup_position,
-        popup_behavior,
-        popup_conditions,
+        configurationMarketingPublication,
         is_popup
     }: CreateMarketingPublicationServiceProps) {
         const marketing_publication = await prismaClient.marketingPublication.create({
@@ -39,15 +33,21 @@ class CreateMarketingPublicationService {
                 redirect_url,
                 publish_at_start,
                 publish_at_end,
-                local_site,
                 is_popup,
-                popup_position,
-                popup_behavior,
-                popup_conditions,
                 status,
             },
         });
 
+        if (configurationMarketingPublication && configurationMarketingPublication.length > 0) {
+            await prismaClient.configurationMarketingOnPublication.createMany({
+                data: configurationMarketingPublication.map((configurationMarketingPublication_id) => ({
+                    marketingPublication_id: marketing_publication.id,
+                    configurationMarketingPublication_id,
+                })),
+            });
+        }
+
+        // Lógica de envio de notificações (permanece a mesma)
         const users_superAdmins = await prismaClient.user.findMany({ where: { role: RoleUser.SUPER_ADMIN } });
         const users_admins = await prismaClient.user.findMany({ where: { role: RoleUser.ADMIN } });
 

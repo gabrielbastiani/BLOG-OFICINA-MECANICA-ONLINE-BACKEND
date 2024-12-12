@@ -41,7 +41,7 @@ class AllMarketingPublicationService {
             take: limit,
             orderBy: { [orderBy]: orderDirection },
             include: {
-                marketingPublicationView: true
+                configurationMarketingOnPublication: true
             }
         });
 
@@ -49,7 +49,7 @@ class AllMarketingPublicationService {
             where: whereClause,
         });
 
-        // --- UNIQUE POST ---//
+        // --- UNIQUE Publication ---//
 
         let marketing_content_unique = null;
 
@@ -57,6 +57,9 @@ class AllMarketingPublicationService {
             marketing_content_unique = await prismaClient.marketingPublication.findUnique({
                 where: {
                     id: marketing_content_id,
+                },
+                include: {
+                    configurationMarketingOnPublication: true
                 }
             });
         }

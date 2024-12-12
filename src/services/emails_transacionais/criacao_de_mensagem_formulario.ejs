@@ -11,7 +11,7 @@
     <tr>
       <td align="center" valign="top" style="padding: 20px;">
         <p>Olá!</p>
-        <p><b><%= name %></b> enviou a mensagem abaixo no formulario de contato do blog da oficina mecanica online.</p>
+        <p><b><%= name %></b> enviou a mensagem abaixo no formulario de contato do <%= name_blog %>.</p>
         <p>Assunto: <b><%= subject %></b></p>
 
         <b>MENSAGEM</b>
@@ -27,8 +27,8 @@
     style="background-color: #000000; font-family: Arial, sans-serif;">
     <tr>
       <td align="center" valign="top" style="padding: 20px;">
-        <img style="height: 30%; height: 30%;" src="http://localhost:3333/files/logo.png" alt="webcarros">
-        <p style="color: #f4f4f4;">Oficina mecânica online</p>
+        <img style="height: 30%; height: 30%;" src="http://localhost:3333/files/<%= logo %>" alt="<%= name_blog %>">
+        <p style="color: #f4f4f4;"><%= name_blog %></p>
       </td>
     </tr>
   </table>
