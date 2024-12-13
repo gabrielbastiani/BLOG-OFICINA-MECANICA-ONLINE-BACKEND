@@ -47,11 +47,11 @@ class RequestPasswordUserRecoveryService {
       name: user.name,
       id: recovery.id,
       logo: infos_blog.logo,
-      name_blog: infos_blog.name
+      name_blog: infos_blog.name_blog
     });
 
     await transporter.sendMail({
-      from: `${infos_blog.name}`,
+      from: `"${infos_blog.name_blog} " <${infos_blog.email_blog}>`,
       to: user.email,
       subject: "Recuperação de senha",
       html: data

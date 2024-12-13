@@ -1,20 +1,29 @@
 import prismaClient from "../../prisma";
+import { Request } from "express";
+import { getClientIp } from "../../middlewares/getClientIp";
+
+function normalizeIp(ip: string): string {
+    if (ip === '::1') {
+        return '127.0.0.1'; // Normaliza o localhost IPv6 para IPv4
+    }
+    return ip;
+}
 
 interface LikeRequest {
     post_id: string;
-    userBlog_id: string;
     isLike: boolean;
+    req: Request;
 }
 
 class PostLikeService {
-    async execute({ post_id, userBlog_id, isLike }: LikeRequest) {
+    async execute({ post_id, req, isLike }: LikeRequest) {
 
-        const existingLike = await prismaClient.postLike.findUnique({
+        const ipAddress = normalizeIp(getClientIp(req));
+
+        const existingLike = await prismaClient.postLike.findFirst({
             where: {
-                post_id_userBlog_id: {
-                    post_id,
-                    userBlog_id,
-                },
+                post_id,
+                ipAddress: ipAddress
             },
         });
 
@@ -51,7 +60,7 @@ class PostLikeService {
             await prismaClient.postLike.create({
                 data: {
                     post_id,
-                    userBlog_id,
+                    ipAddress,
                     isLike,
                 },
             });

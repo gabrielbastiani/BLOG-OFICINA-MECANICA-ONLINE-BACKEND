@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 import prismaClient from "../../prisma";
 import path from "path";
 import ejs from "ejs";
+import moment from "moment";
 
 class PostPublishScheduler {
 
@@ -25,7 +26,7 @@ class PostPublishScheduler {
 
             const postsToPublish = await prismaClient.post.findMany({
                 where: {
-                    status: "Indisponivel",
+                    status: "Programado",
                     publish_at: { lte: now },
                 },
             });
@@ -41,7 +42,7 @@ class PostPublishScheduler {
 
                 // Envia e-mails para cada post publicado
                 for (const post of postsToPublish) {
-                    await this.sendEmail(post.title);
+                    await this.sendEmail(post.title, post.publish_at);
                 }
             }
         } catch (error) {
@@ -49,7 +50,7 @@ class PostPublishScheduler {
         }
     }
 
-    private async sendEmail(postTitle: string) {
+    private async sendEmail(postTitle: string, postPublish_at: Date) {
         try {
             const infos_blog = await prismaClient.configurationBlog.findFirst();
             const requiredPath = path.join(__dirname, `../emails_transacionais/post_programado.ejs`);
@@ -57,13 +58,14 @@ class PostPublishScheduler {
             const data = await ejs.renderFile(requiredPath, {
                 title: postTitle,
                 logo: infos_blog.logo,
-                name_blog: infos_blog.name
+                name_blog: infos_blog.name_blog,
+                start: moment(postPublish_at).format('DD/MM/YYYY HH:mm')
             });
 
             await this.transporter.sendMail({
-                from: `${infos_blog.name}`,
-                to: `${infos_blog.email}`,
-                subject: `Post programado publicado no ${infos_blog.name}`,
+                from: `"${infos_blog.name_blog} " <${infos_blog.email_blog}>`,
+                to: `${infos_blog.email_blog}`,
+                subject: `Post programado publicado no ${infos_blog.name_blog}`,
                 html: data
             });
         } catch (error) {

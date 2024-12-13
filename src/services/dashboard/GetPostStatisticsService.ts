@@ -48,7 +48,7 @@ class GetPostStatisticsService {
         // Buscar posts programados
         const posts = await prismaClient.post.findMany({
             where: {
-                status: "Indisponivel",
+                status: "Programado",
                 publish_at: {
                     not: null, // Apenas posts com `publish_at`
                 },
@@ -63,7 +63,7 @@ class GetPostStatisticsService {
 
         const totalPostsPublish = await prismaClient.post.count({
             where: {
-                status: "Indisponivel",
+                status: "Programado",
                 publish_at: {
                     not: null,
                 },

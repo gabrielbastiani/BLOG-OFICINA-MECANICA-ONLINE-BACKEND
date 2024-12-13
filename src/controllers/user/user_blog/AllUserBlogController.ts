@@ -14,8 +14,6 @@ class AllUserBlogController {
             endDate
         } = req.query;
 
-        const user_id = req.user_id; // Assumindo que o middleware de autenticação já insere o ID do usuário autenticado em `req.user`
-
         const allUsers = new AllUsersBlogService();
         const users = await allUsers.execute(
             Number(page),

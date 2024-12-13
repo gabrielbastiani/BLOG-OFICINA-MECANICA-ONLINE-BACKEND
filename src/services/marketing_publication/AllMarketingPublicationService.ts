@@ -64,12 +64,18 @@ class AllMarketingPublicationService {
             });
         }
 
+        // --- ALL MARKETING CONFIGS --- //
+        const total_marketing_configs = await prismaClient.configurationMarketingPublication.findMany();
+
+        console.log(total_marketing_configs)
+
         return {
+            total_marketing_configs: total_marketing_configs,
             unique_marketing_content: marketing_content_unique,
             publications: all_publications,
             currentPage: page,
             totalPages: Math.ceil(total_publications / limit),
-            totalPublications: total_publications,
+            totalPublications: total_publications
         };
     }
 }

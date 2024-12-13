@@ -5,6 +5,7 @@ import { isAuthenticated } from "./middlewares/isAuthenticated";
 
 // -- ROUTES CONFIGURATION BLOG --
 import { CreateConfigurationBlogController } from "./controllers/configuration_blog/CreateConfigurationBlogController";
+import { GetConfigurationsBlogController } from "./controllers/configuration_blog/GetConfigurationsBlogController";
 
 // -- ROUTES USERS --
 import { UserCreateController } from "./controllers/user/UserCreateController";
@@ -129,6 +130,7 @@ const temp_file = multer(uploadConfig.upload("./temp_file"));
 
 // -- ROUTES CONFIGURATION BLOG --
 router.post('/configuration_blog/create', upload_image.single('file'), new CreateConfigurationBlogController().handle);
+router.get('/configuration_blog/get_configs', new GetConfigurationsBlogController().handle);
 
 // -- ROUTES USERS --
 router.post('/user/create', upload_image.single('file'), new UserCreateController().handle);
@@ -170,7 +172,7 @@ router.get('/post/download_excel_delete_post', isAuthenticated, new GenerateExce
 router.post('/post/bulk_delete_posts', isAuthenticated, temp_file.single('file'), new BulkDeletePostsController().handle);
 router.get('/post/donwload_excel_posts', isAuthenticated, new GenerateExcelPostsController().handle);
 router.post('/post/bulk_posts', isAuthenticated, temp_file.single("file"), new BulkPostsImportController().handle);
-router.put('/post/likes', isAuthenticated, new PostLikeController().handle);
+router.patch('/post/likes', new PostLikeController().handle);
 router.patch("/post/:post_id/views", new UpdateViewsController().handle);
 
 // -- ROUTES POST CATEGORY --
@@ -182,7 +184,7 @@ router.get('/post_category/get_post_category', isAuthenticated, new PostCategory
 // -- ROUTES COMMENT --
 router.post('/comment/create_comment', isAuthenticated, new CommentCreateController().handle);
 router.put('/comment/update_status', isAuthenticated, new CommentStatusController().handle);
-router.put('/comment/likes', isAuthenticated, new CommentLikeController().handle);
+router.patch('/comment/likes', new CommentLikeController().handle);
 router.put('/comment/delete', isAuthenticated, new CommentDeleteController().handle);
 router.get('/comment/cms/get_comments', isAuthenticated, new AllCommentController().handle);
 

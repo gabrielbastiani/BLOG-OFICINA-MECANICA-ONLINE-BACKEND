@@ -72,15 +72,15 @@ class EndMarketingPublicationScheduler {
 
     private async sendEmail(title: string, start: string, end: string) {
         const infos_blog = await prismaClient.configurationBlog.findFirst();
-        const name_blog = infos_blog.name;
+        const name_blog = infos_blog.name_blog;
         const logo = infos_blog.logo;
         const emailTemplatePath = path.join(__dirname, "../emails_transacionais/encerrar_publicidade_programada.ejs");
 
         const htmlContent = await ejs.renderFile(emailTemplatePath, { title, start, end, name_blog, logo });
 
         await this.transporter.sendMail({
-            from: `${infos_blog.name}`,
-            to: `${infos_blog.email}`,
+            from: `"${infos_blog.name_blog} " <${infos_blog.email_blog}>`,
+            to: `${infos_blog.email_blog}`,
             subject: "Publicidade Programada Encerrada",
             html: htmlContent,
         });

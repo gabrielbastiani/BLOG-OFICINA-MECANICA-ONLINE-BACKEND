@@ -61,8 +61,8 @@ CREATE TABLE "passwordrecoveryusers" (
 -- CreateTable
 CREATE TABLE "configurationsblog" (
     "id" TEXT NOT NULL,
-    "name" VARCHAR(725),
-    "email" VARCHAR(725),
+    "name_blog" VARCHAR(725),
+    "email_blog" VARCHAR(725),
     "phone" VARCHAR(725),
     "logo" TEXT,
     "description_blog" VARCHAR(15725),

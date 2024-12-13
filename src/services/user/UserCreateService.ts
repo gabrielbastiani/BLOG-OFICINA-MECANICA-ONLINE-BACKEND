@@ -91,33 +91,39 @@ class UserCreateService {
                 data: notificationsData
             });
 
+            const infos_blog = await prismaClient.configurationBlog.findFirst();
             const requiredPath = path.join(__dirname, `../emails_transacionais/criacao_de_employee.ejs`);
 
             const data = await ejs.renderFile(requiredPath, {
-                name: user_create.name
+                name: user_create.name,
+                name_blog: infos_blog.name_blog,
+                logo: infos_blog.logo
             });
 
             await transporter.sendMail({
-                from: `infos_blog.name <infos_blog.email>`,
-                to: "infos_blog.email",
-                subject: `Novo usuario se cadastrando no CMS do infos_blog.name`,
+                from: `"${infos_blog.name_blog} " <${infos_blog.email_blog}>`,
+                to: `${infos_blog.email_blog}`,
+                subject: `Novo usuario se cadastrando no CMS do ${infos_blog.name_blog}`,
                 html: data
             });
 
             if (send_email === true) {
 
+                const infos_blog = await prismaClient.configurationBlog.findFirst();
                 const requiredPath = path.join(__dirname, `../emails_transacionais/data_login_user.ejs`);
 
                 const data = await ejs.renderFile(requiredPath, {
                     name: user_create.name,
                     email: user_create.email,
-                    password: password
+                    password: password,
+                    name_blog: infos_blog.name_blog,
+                    logo: infos_blog.logo
                 });
 
                 await transporter.sendMail({
-                    from: `infos_blog.name <infos_blog.email>`,
+                    from: `"${infos_blog.name_blog} " <${infos_blog.email_blog}>`,
                     to: user_create.email,
-                    subject: `Dados de acesso CMS do infos_blog.name`,
+                    subject: `Dados de acesso CMS do ${infos_blog.name_blog}`,
                     html: data
                 });
 
@@ -214,13 +220,13 @@ class UserCreateService {
         const data = await ejs.renderFile(requiredPath, {
             name: user_create_super_admin.name,
             logo: infos_blog.logo,
-            name_blog: infos_blog.name
+            name_blog: infos_blog.name_blog
         });
 
         await transporter.sendMail({
-            from: `${infos_blog.name}`,
+            from: `"${infos_blog.name_blog} " <${infos_blog.email_blog}>`,
             to: user_create_super_admin.email,
-            subject: `Novo super administrador se cadastrando no CMS do ${infos_blog.name}`,
+            subject: `Novo super administrador se cadastrando no CMS do ${infos_blog.name_blog}`,
             html: data
         });
 

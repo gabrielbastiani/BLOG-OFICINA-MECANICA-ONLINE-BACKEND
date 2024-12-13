@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
-import { CreateConfigurationBlogService } from '../../services/marketing_publication/CreateConfigurationBlogService';
+import { CreateConfigurationBlogService } from '../../services/configuration_blog/CreateConfigurationBlogService'; 
 
 class CreateConfigurationBlogController {
     async handle(req: Request, res: Response) {
         const {
-            name,
-            logo,
-            description_blog
+            name_blog, email_blog, logo, phone, description_blog
         } = req.body;
 
         const create_configuration = new CreateConfigurationBlogService();
@@ -17,9 +15,11 @@ class CreateConfigurationBlogController {
         }
 
         const configuration = await create_configuration.execute({
-            name,
+            name_blog,
             description_blog,
-            logo: imageToUpdate
+            logo: imageToUpdate,
+            email_blog,
+            phone
         });
 
         return res.json(configuration);
