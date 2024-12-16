@@ -119,8 +119,11 @@ import { MarketingUpdateDataController } from "./controllers/marketing_publicati
 import { GenerateExcelDeletePublicationController } from "./controllers/marketing_publication/GenerateExcelDeletePublicationController";
 import { BulkDeleteMarketingPublicationController } from "./controllers/marketing_publication/BulkDeleteMarketingPublicationController";
 import { MarketingPublicationDeleteDeleteController } from "./controllers/marketing_publication/MarketingPublicationDeleteDeleteController";
-
-
+import { CreateTypeConfigurationMarketingController } from "./controllers/marketing_publication/configuration_marketing/CreateTypeConfigurationMarketingController";
+import { AllTypeConfigurationMarketingController } from "./controllers/marketing_publication/configuration_marketing/AllTypeConfigurationMarketingController";
+import { TypeConfigurationsUpdateDataController } from "./controllers/marketing_publication/configuration_marketing/TypeConfigurationsUpdateDataController";
+import { TypeConfigurationMarketingDeleteController } from "./controllers/marketing_publication/configuration_marketing/TypeConfigurationMarketingDeleteController";
+import { CreateConfigurationMarketingController } from "./controllers/marketing_publication/configuration_marketing/CreateConfigurationMarketingController";
 
 
 const router = Router();
@@ -245,6 +248,11 @@ router.put('/marketing_publication/update', isAuthenticated, upload_image.single
 router.get('/marketing_publication/download_excel_delete_marketing', isAuthenticated, new GenerateExcelDeletePublicationController().handle);
 router.post('/marketing_publication/bulk_delete_publications', isAuthenticated, temp_file.single('file'), new BulkDeleteMarketingPublicationController().handle);
 router.delete('/marketing_publication/delete_publications', isAuthenticated, new MarketingPublicationDeleteDeleteController().handle);
+router.post('/marketing_configurations/create/type', isAuthenticated, new CreateTypeConfigurationMarketingController().handle);
+router.get('/all_marketing_configurations/type', isAuthenticated, new AllTypeConfigurationMarketingController().handle);
+router.put('/marketing_configurations/update/type', isAuthenticated, new TypeConfigurationsUpdateDataController().handle);
+router.delete('/marketing_configurations/delete/type', isAuthenticated, new TypeConfigurationMarketingDeleteController().handle);
+router.post('/marketing_configurations/configuration', isAuthenticated, new CreateConfigurationMarketingController().handle);
 
 
 export { router }

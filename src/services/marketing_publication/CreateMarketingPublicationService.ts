@@ -40,9 +40,9 @@ class CreateMarketingPublicationService {
 
         if (configurationMarketingPublication && configurationMarketingPublication.length > 0) {
             await prismaClient.configurationMarketingOnPublication.createMany({
-                data: configurationMarketingPublication.map((configurationMarketingPublication_id) => ({
+                data: configurationMarketingPublication.map((configurationMarketingConfiguration_id) => ({
                     marketingPublication_id: marketing_publication.id,
-                    configurationMarketingPublication_id,
+                    configurationMarketingConfiguration_id,
                 })),
             });
         }

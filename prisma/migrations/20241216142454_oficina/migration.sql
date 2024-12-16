@@ -11,7 +11,7 @@ CREATE TYPE "StatusUserBlog" AS ENUM ('Disponivel', 'Indisponivel');
 CREATE TYPE "StatusCategory" AS ENUM ('Disponivel', 'Indisponivel');
 
 -- CreateEnum
-CREATE TYPE "StatusPost" AS ENUM ('Disponivel', 'Indisponivel');
+CREATE TYPE "StatusPost" AS ENUM ('Programado', 'Disponivel', 'Indisponivel');
 
 -- CreateEnum
 CREATE TYPE "StatusMarketingPublication" AS ENUM ('Programado', 'Fim_da_programacao', 'Disponivel', 'Indisponivel');
@@ -139,7 +139,7 @@ CREATE TABLE "posts" (
 CREATE TABLE "postlikes" (
     "id" UUID NOT NULL,
     "post_id" UUID NOT NULL,
-    "userBlog_id" UUID,
+    "ipAddress" VARCHAR(45),
     "isLike" BOOLEAN NOT NULL,
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -195,7 +195,7 @@ CREATE TABLE "comments" (
 CREATE TABLE "commentlikes" (
     "id" UUID NOT NULL,
     "comment_id" UUID NOT NULL,
-    "userBlog_id" UUID,
+    "ipAddress" VARCHAR(45),
     "isLike" BOOLEAN NOT NULL,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
 
@@ -254,17 +254,26 @@ CREATE TABLE "notificationuserblogs" (
 );
 
 -- CreateTable
-CREATE TABLE "configurationsmarketingpublications" (
+CREATE TABLE "configurationmarketingtypes" (
     "id" TEXT NOT NULL,
-    "value" TEXT,
-    "local_site" TEXT,
-    "popup_position" TEXT,
-    "popup_behavior" TEXT,
-    "popup_conditions" TEXT,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "configurationsmarketingpublications_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "configurationmarketingtypes_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "configurationmarketingconfigurations" (
+    "id" TEXT NOT NULL,
+    "value" TEXT NOT NULL,
+    "description" TEXT,
+    "configurationMarketingType_id" TEXT NOT NULL,
+    "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "configurationmarketingconfigurations_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -303,7 +312,7 @@ CREATE TABLE "marketingpublicationviews" (
 CREATE TABLE "configurationsmarketingonpublications" (
     "id" UUID NOT NULL,
     "marketingPublication_id" UUID NOT NULL,
-    "configurationMarketingPublication_id" TEXT NOT NULL,
+    "configurationMarketingConfiguration_id" TEXT NOT NULL,
 
     CONSTRAINT "configurationsmarketingonpublications_pkey" PRIMARY KEY ("id")
 );
@@ -336,9 +345,6 @@ CREATE UNIQUE INDEX "tags_tag_name_key" ON "tags"("tag_name");
 CREATE UNIQUE INDEX "posts_custom_url_key" ON "posts"("custom_url");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "postlikes_post_id_userBlog_id_key" ON "postlikes"("post_id", "userBlog_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "postviews_post_id_ipAddress_key" ON "postviews"("post_id", "ipAddress");
 
 -- CreateIndex
@@ -348,13 +354,13 @@ CREATE UNIQUE INDEX "category_on_posts_post_id_category_id_key" ON "category_on_
 CREATE UNIQUE INDEX "tag_on_posts_post_id_tag_id_key" ON "tag_on_posts"("post_id", "tag_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "commentlikes_comment_id_userBlog_id_key" ON "commentlikes"("comment_id", "userBlog_id");
+CREATE UNIQUE INDEX "configurationmarketingtypes_name_key" ON "configurationmarketingtypes"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "marketingpublicationviews_marketingPublication_id_ipAddress_key" ON "marketingpublicationviews"("marketingPublication_id", "ipAddress");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "configurationsmarketingonpublications_marketingPublication__key" ON "configurationsmarketingonpublications"("marketingPublication_id", "configurationMarketingPublication_id");
+CREATE UNIQUE INDEX "configurationsmarketingonpublications_marketingPublication__key" ON "configurationsmarketingonpublications"("marketingPublication_id", "configurationMarketingConfiguration_id");
 
 -- AddForeignKey
 ALTER TABLE "sitemaps" ADD CONSTRAINT "sitemaps_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -367,9 +373,6 @@ ALTER TABLE "posts" ADD CONSTRAINT "posts_author_fkey" FOREIGN KEY ("author") RE
 
 -- AddForeignKey
 ALTER TABLE "postlikes" ADD CONSTRAINT "postlikes_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "postlikes" ADD CONSTRAINT "postlikes_userBlog_id_fkey" FOREIGN KEY ("userBlog_id") REFERENCES "userblogs"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "postviews" ADD CONSTRAINT "postviews_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -399,13 +402,13 @@ ALTER TABLE "comments" ADD CONSTRAINT "comments_parentId_fkey" FOREIGN KEY ("par
 ALTER TABLE "commentlikes" ADD CONSTRAINT "commentlikes_comment_id_fkey" FOREIGN KEY ("comment_id") REFERENCES "comments"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "commentlikes" ADD CONSTRAINT "commentlikes_userBlog_id_fkey" FOREIGN KEY ("userBlog_id") REFERENCES "userblogs"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "notificationusers" ADD CONSTRAINT "notificationusers_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "notificationuserblogs" ADD CONSTRAINT "notificationuserblogs_userBlog_id_fkey" FOREIGN KEY ("userBlog_id") REFERENCES "userblogs"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "configurationmarketingconfigurations" ADD CONSTRAINT "configurationmarketingconfigurations_configurationMarketin_fkey" FOREIGN KEY ("configurationMarketingType_id") REFERENCES "configurationmarketingtypes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "marketingpublicationviews" ADD CONSTRAINT "marketingpublicationviews_marketingPublication_id_fkey" FOREIGN KEY ("marketingPublication_id") REFERENCES "marketingpublications"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -414,4 +417,4 @@ ALTER TABLE "marketingpublicationviews" ADD CONSTRAINT "marketingpublicationview
 ALTER TABLE "configurationsmarketingonpublications" ADD CONSTRAINT "configurationsmarketingonpublications_marketingPublication_fkey" FOREIGN KEY ("marketingPublication_id") REFERENCES "marketingpublications"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "configurationsmarketingonpublications" ADD CONSTRAINT "configurationsmarketingonpublications_configurationMarketi_fkey" FOREIGN KEY ("configurationMarketingPublication_id") REFERENCES "configurationsmarketingpublications"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "configurationsmarketingonpublications" ADD CONSTRAINT "configurationsmarketingonpublications_configurationMarketi_fkey" FOREIGN KEY ("configurationMarketingConfiguration_id") REFERENCES "configurationmarketingconfigurations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

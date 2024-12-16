@@ -144,66 +144,6 @@ class UserCreateService {
             }
         });
 
-        try {
-            await prismaClient.configurationMarketingPublication.create({
-                data: {
-                    local_site: "Home parte superior",
-                    value: 'top_home'
-                }
-            });
-
-            await prismaClient.configurationMarketingPublication.create({
-                data: {
-                    local_site: "Página de post",
-                    value: 'inside-post'
-                }
-            });
-
-            await prismaClient.configurationMarketingPublication.create({
-                data: {
-                    popup_behavior: "Em quanto rola a página",
-                    value: 'on_load'
-                }
-            });
-
-            await prismaClient.configurationMarketingPublication.create({
-                data: {
-                    popup_behavior: "Em quanto carrega uma página",
-                    value: 'on_scroll'
-                }
-            });
-
-            await prismaClient.configurationMarketingPublication.create({
-                data: {
-                    popup_conditions: "Página inicial",
-                    value: '/'
-                }
-            });
-
-            await prismaClient.configurationMarketingPublication.create({
-                data: {
-                    popup_conditions: "Página do post",
-                    value: '/postPage'
-                }
-            });
-
-            await prismaClient.configurationMarketingPublication.create({
-                data: {
-                    popup_position: "Parte superior direita",
-                    value: 'top-right'
-                }
-            });
-
-            await prismaClient.configurationMarketingPublication.create({
-                data: {
-                    popup_position: "Parte central",
-                    value: 'center'
-                }
-            });
-        } catch (error) {
-            console.log(error)
-        }
-
         const transporter = nodemailer.createTransport({
             host: process.env.HOST_SMTP,
             port: 465,

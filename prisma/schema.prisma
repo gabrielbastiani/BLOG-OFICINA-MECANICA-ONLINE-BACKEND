@@ -312,20 +312,32 @@ model NotificationUserBlog {
   @@map("notificationuserblogs")
 }
 
-model ConfigurationMarketingPublication {
-  id               String  @id @default(uuid())
-  value            String?
-  local_site       String?
-  popup_position   String?
-  popup_behavior   String?
-  popup_conditions String?
+model ConfigurationMarketingType {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
 
+  configurationMarketingConfiguration ConfigurationMarketingConfiguration[]
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt
+
+  @@map("configurationmarketingtypes")
+}
+
+model ConfigurationMarketingConfiguration {
+  id                            String                     @id @default(uuid())
+  value                         String
+  description                   String?
+  configurationMarketingType    ConfigurationMarketingType @relation(fields: [configurationMarketingType_id], references: [id], onDelete: Cascade)
+  configurationMarketingType_id String
+  
   configurationMarketingOnPublication ConfigurationMarketingOnPublication[]
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt
 
-  @@map("configurationsmarketingpublications")
+  @@map("configurationmarketingconfigurations")
 }
 
 model MarketingPublication {
@@ -373,12 +385,12 @@ model MarketingPublicationView {
 }
 
 model ConfigurationMarketingOnPublication {
-  id                                   String                            @id @default(uuid()) @db.Uuid
-  marketingPublication                 MarketingPublication              @relation(fields: [marketingPublication_id], references: [id], onDelete: Cascade)
-  marketingPublication_id              String                            @db.Uuid
-  configurationMarketingPublication    ConfigurationMarketingPublication @relation(fields: [configurationMarketingPublication_id], references: [id])
-  configurationMarketingPublication_id String
+  id                                     String                              @id @default(uuid()) @db.Uuid
+  marketingPublication                   MarketingPublication                @relation(fields: [marketingPublication_id], references: [id], onDelete: Cascade)
+  marketingPublication_id                String                              @db.Uuid
+  configurationMarketingConfiguration    ConfigurationMarketingConfiguration @relation(fields: [configurationMarketingConfiguration_id], references: [id])
+  configurationMarketingConfiguration_id String
 
-  @@unique([marketingPublication_id, configurationMarketingPublication_id])
+  @@unique([marketingPublication_id, configurationMarketingConfiguration_id])
   @@map("configurationsmarketingonpublications")
 }
