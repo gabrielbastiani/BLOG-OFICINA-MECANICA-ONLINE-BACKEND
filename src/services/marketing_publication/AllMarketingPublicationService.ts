@@ -59,7 +59,11 @@ class AllMarketingPublicationService {
                     id: marketing_content_id,
                 },
                 include: {
-                    configurationMarketingOnPublication: true
+                    configurationMarketingOnPublication: {
+                        include: {
+                            configurationMarketingType: true
+                        }
+                    }
                 }
             });
         }

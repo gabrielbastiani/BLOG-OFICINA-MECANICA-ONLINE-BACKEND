@@ -318,6 +318,7 @@ model ConfigurationMarketingType {
   description String?
 
   configurationMarketingConfiguration ConfigurationMarketingConfiguration[]
+  ConfigurationMarketingOnPublication ConfigurationMarketingOnPublication[]
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt
@@ -328,11 +329,9 @@ model ConfigurationMarketingType {
 model ConfigurationMarketingConfiguration {
   id                            String                     @id @default(uuid())
   value                         String
-  description                   String?
+  description_value             String?
   configurationMarketingType    ConfigurationMarketingType @relation(fields: [configurationMarketingType_id], references: [id], onDelete: Cascade)
   configurationMarketingType_id String
-  
-  configurationMarketingOnPublication ConfigurationMarketingOnPublication[]
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt
@@ -385,12 +384,12 @@ model MarketingPublicationView {
 }
 
 model ConfigurationMarketingOnPublication {
-  id                                     String                              @id @default(uuid()) @db.Uuid
-  marketingPublication                   MarketingPublication                @relation(fields: [marketingPublication_id], references: [id], onDelete: Cascade)
-  marketingPublication_id                String                              @db.Uuid
-  configurationMarketingConfiguration    ConfigurationMarketingConfiguration @relation(fields: [configurationMarketingConfiguration_id], references: [id])
-  configurationMarketingConfiguration_id String
+  id                            String                     @id @default(uuid()) @db.Uuid
+  marketingPublication          MarketingPublication       @relation(fields: [marketingPublication_id], references: [id], onDelete: Cascade)
+  marketingPublication_id       String                     @db.Uuid
+  configurationMarketingType    ConfigurationMarketingType @relation(fields: [configurationMarketingType_id], references: [id])
+  configurationMarketingType_id String
 
-  @@unique([marketingPublication_id, configurationMarketingConfiguration_id])
+  @@unique([marketingPublication_id, configurationMarketingType_id])
   @@map("configurationsmarketingonpublications")
 }

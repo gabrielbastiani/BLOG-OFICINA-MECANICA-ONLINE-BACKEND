@@ -80,9 +80,9 @@ class MarketingUpdateDataService {
             });
 
             // Adicionar novas
-            const configurationRelation = configurationMarketingPublication.map((configurationMarketingConfiguration_id) => ({
+            const configurationRelation = configurationMarketingPublication.map((configurationMarketingType_id) => ({
                 marketingPublication_id,
-                configurationMarketingConfiguration_id,
+                configurationMarketingType_id,
             }));
 
             await prismaClient.configurationMarketingOnPublication.createMany({

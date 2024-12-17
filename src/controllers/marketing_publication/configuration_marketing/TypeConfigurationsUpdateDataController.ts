@@ -7,13 +7,19 @@ class TypeConfigurationsUpdateDataController {
         const {
             configurationMarketingType_id,
             name,
-            description
+            description,
+            configurationMarketingConfiguration_id,
+            value,
+            description_value
         } = req.body;
 
         const update_configurations = new TypeConfigurationsUpdateDataService();
 
         const configurations = await update_configurations.execute({
             configurationMarketingType_id,
+            configurationMarketingConfiguration_id,
+            description_value,
+            value,
             name,
             description
         });

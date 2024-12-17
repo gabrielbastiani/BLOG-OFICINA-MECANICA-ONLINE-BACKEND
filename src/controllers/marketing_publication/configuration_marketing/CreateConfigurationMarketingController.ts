@@ -5,7 +5,7 @@ class CreateConfigurationMarketingController {
     async handle(req: Request, res: Response) {
         const {
             value,
-            description,
+            description_value,
             configurationMarketingType_id
         } = req.body;
 
@@ -13,7 +13,7 @@ class CreateConfigurationMarketingController {
 
         const marketing = await createConfiguration.execute({
             value,
-            description,
+            description_value,
             configurationMarketingType_id
         });
 

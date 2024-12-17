@@ -1,5 +1,5 @@
 import moment from "moment";
-import prismaClient from "../../../prisma"; 
+import prismaClient from "../../../prisma";
 import { Prisma } from "@prisma/client";
 
 class AllTypeConfigurationMarketingService {
@@ -41,15 +41,7 @@ class AllTypeConfigurationMarketingService {
             take: limit,
             orderBy: { [orderBy]: orderDirection },
             include: {
-                configurationMarketingConfiguration: {
-                    include: {
-                        configurationMarketingOnPublication: {
-                            include: {
-                                marketingPublication: true
-                            }
-                        }
-                    }
-                }
+                configurationMarketingConfiguration: true
             }
         });
 
@@ -67,20 +59,20 @@ class AllTypeConfigurationMarketingService {
                     id: configurationMarketingType_id,
                 },
                 include: {
-                    configurationMarketingConfiguration: {
-                        include: {
-                            configurationMarketingOnPublication: {
-                                include: {
-                                    marketingPublication: true
-                                }
-                            }
-                        }
-                    }
+                    configurationMarketingConfiguration: true
                 }
             });
         }
+        
+        // --- ALL CONFIGS --- //
+        const all_configs = await prismaClient.configurationMarketingType.findMany({
+            include: {
+                configurationMarketingConfiguration: true
+            }
+        });
 
         return {
+            total_marketing_configs: all_configs,
             unique_type_configuration: configurationMarketing,
             configurations: all_configurations,
             currentPage: page,
