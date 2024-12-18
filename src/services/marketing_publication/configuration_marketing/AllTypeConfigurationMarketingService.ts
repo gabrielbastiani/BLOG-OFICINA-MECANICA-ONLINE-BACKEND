@@ -63,16 +63,8 @@ class AllTypeConfigurationMarketingService {
                 }
             });
         }
-        
-        // --- ALL CONFIGS --- //
-        const all_configs = await prismaClient.configurationMarketingType.findMany({
-            include: {
-                configurationMarketingConfiguration: true
-            }
-        });
 
         return {
-            total_marketing_configs: all_configs,
             unique_type_configuration: configurationMarketing,
             configurations: all_configurations,
             currentPage: page,

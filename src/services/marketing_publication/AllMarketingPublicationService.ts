@@ -41,7 +41,11 @@ class AllMarketingPublicationService {
             take: limit,
             orderBy: { [orderBy]: orderDirection },
             include: {
-                configurationMarketingOnPublication: true
+                configurationMarketingOnPublication: {
+                    include: {
+                        configurationMarketingType: true
+                    }
+                }
             }
         });
 

@@ -12,7 +12,7 @@ interface PublicationProps {
     redirect_url?: string;
     publish_at_start?: Date;
     publish_at_end?: Date;
-    configurationMarketingPublication?: string[];
+    configurationMarketingOnPublication?: string[];
 }
 
 class MarketingUpdateDataService {
@@ -25,7 +25,7 @@ class MarketingUpdateDataService {
         redirect_url,
         publish_at_start,
         publish_at_end,
-        configurationMarketingPublication
+        configurationMarketingOnPublication
     }: PublicationProps) {
 
         const marketingPublication = await prismaClient.marketingPublication.findUnique({
@@ -73,14 +73,14 @@ class MarketingUpdateDataService {
             dataToUpdate.publish_at_end = publish_at_end;
         }
 
-        if (configurationMarketingPublication) {
+        if (configurationMarketingOnPublication) {
             // Deletar antigas
             await prismaClient.configurationMarketingOnPublication.deleteMany({
                 where: { marketingPublication_id },
             });
 
             // Adicionar novas
-            const configurationRelation = configurationMarketingPublication.map((configurationMarketingType_id) => ({
+            const configurationRelation = configurationMarketingOnPublication.map((configurationMarketingType_id) => ({
                 marketingPublication_id,
                 configurationMarketingType_id,
             }));

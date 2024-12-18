@@ -124,6 +124,7 @@ import { AllTypeConfigurationMarketingController } from "./controllers/marketing
 import { TypeConfigurationsUpdateDataController } from "./controllers/marketing_publication/configuration_marketing/TypeConfigurationsUpdateDataController";
 import { TypeConfigurationMarketingDeleteController } from "./controllers/marketing_publication/configuration_marketing/TypeConfigurationMarketingDeleteController";
 import { CreateConfigurationMarketingController } from "./controllers/marketing_publication/configuration_marketing/CreateConfigurationMarketingController";
+import { AllConfigurationMarketingController } from "./controllers/marketing_publication/configuration_marketing/AllConfigurationMarketingController";
 
 
 const router = Router();
@@ -253,6 +254,6 @@ router.get('/all_marketing_configurations/type', isAuthenticated, new AllTypeCon
 router.put('/marketing_configurations/update/type', isAuthenticated, new TypeConfigurationsUpdateDataController().handle);
 router.delete('/marketing_configurations/delete/type', isAuthenticated, new TypeConfigurationMarketingDeleteController().handle);
 router.post('/marketing_configurations/configuration', isAuthenticated, new CreateConfigurationMarketingController().handle);
-
+router.get('/marketing_configurations/configuration/all_configs', isAuthenticated, new AllConfigurationMarketingController().handle);
 
 export { router }
